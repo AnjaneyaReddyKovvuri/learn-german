@@ -109,6 +109,18 @@ label.check { font-weight: 600; cursor: pointer; }
 .score small { color: var(--muted); font-weight: 600; }
 
 .game-card { text-align: center; padding: 32px 20px; transition: background .25s; }
+/* Question card on the left, scores in a column on the right. */
+.game-layout { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 20px; align-items: start; margin-bottom: 20px; }
+.game-layout .game-card { margin-bottom: 0; }
+.game-layout .scoreboard { grid-template-columns: 1fr; margin-bottom: 0; }
+@media (max-width: 760px) {
+  /* Narrow screens: compact row of scores above the card. */
+  .game-layout { grid-template-columns: 1fr; }
+  .game-layout .scoreboard { order: -1; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .game-layout .score { padding: 8px 4px; }
+  .game-layout .score span { font-size: 1.3rem; }
+  .game-layout .score small { font-size: .68rem; }
+}
 .game-card.flash-der { background: var(--der-bg); }
 .game-card.flash-die { background: var(--die-bg); }
 .game-card.flash-das { background: var(--das-bg); }
@@ -149,7 +161,7 @@ label.check { font-weight: 600; cursor: pointer; }
 .ans-die.correct { background: var(--die); }
 .ans-das.correct { background: var(--das); }
 .ans.wrong { background: #f1f5f9; text-decoration: line-through; opacity: 1; }
-.game-controls { display: flex; justify-content: center; gap: 10px; }
+.game-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
 /* ---------- Browse ---------- */
 .browse-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }
@@ -340,7 +352,6 @@ img.print-pic { height: 3rem; border-radius: 8px; }
   .tab { flex: 0 0 auto; padding: 8px 12px; }
   .tab small { display: none; }
   main { padding: 14px 12px 48px; }
-  .scoreboard { grid-template-columns: repeat(2, 1fr); }
   .ans { min-width: 90px; font-size: 1.3rem; }
 }
 
