@@ -1,6 +1,6 @@
 /* Service worker: keeps every app file on the device so the app starts fast and works offline.
    VERSION and FILES are written by scripts/update_version.py – run it after changing any app file. */
-const VERSION = "28a6e77ed3";
+const VERSION = "f7cb0bb3c7";
 const FILES = [
   "./",
   "./css/fonts.css",

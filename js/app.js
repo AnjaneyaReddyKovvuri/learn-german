@@ -26,6 +26,14 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const keyOf = (e) => `${e.article} ${e.noun}`;
   const collator = new Intl.Collator("de");
+  // Show the share of correct answers ("85 %"), coloured green / orange / red.
+  function showPct(node, correct, wrong) {
+    const total = correct + wrong;
+    const pct = total ? Math.round((correct / total) * 100) : null;
+    node.textContent = pct == null ? "–" : `${pct} %`;
+    node.className = "pct" + (pct == null ? "" : pct >= 80 ? " good" : pct >= 50 ? " ok" : " low");
+    node.title = total ? `${correct} von ${total} richtig · ${correct} of ${total} correct` : "";
+  }
   // English search: match at word starts; a phrase like "to go" must end on a word boundary ("to go" ≠ "to govern").
   const enMatch = (en, q) => {
     const safe = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -403,6 +411,7 @@
       el.wrong.textContent = stats.wrong;
       el.streak.textContent = stats.streak;
       el.best.textContent = stats.best;
+      showPct($("#scPct"), stats.correct, stats.wrong);
     }
 
     function pool() {
@@ -1317,6 +1326,7 @@
       const ok = a === right;
       if (ok) { stats.correct++; stats.streak++; } else { stats.wrong++; stats.streak = 0; }
       el.correct.textContent = stats.correct; el.wrong.textContent = stats.wrong; el.streak.textContent = stats.streak;
+      showPct($("#cqPct"), stats.correct, stats.wrong);
       $$("#cqAnswers .ans").forEach((b) => {
         b.disabled = true;
         if (b.dataset.a === right) b.classList.add("correct", "cq-right");
