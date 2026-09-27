@@ -347,7 +347,7 @@
     const el = {
       category: $("#gameCategory"), seconds: $("#gameSeconds"), hint: $("#gameHint"),
       auto: $("#gameAuto"), mistakesOnly: $("#gameMistakes"), autoSpeak: $("#gameAutoSpeak"),
-      card: $("#gameCard"), cat: $("#gameCat"), article: $("#gameArticle"), word: $("#gameWord"),
+      card: $("#gameCard"), verdict: $("#gameVerdict"), cat: $("#gameCat"), article: $("#gameArticle"), word: $("#gameWord"),
       hintText: $("#gameHintText"), pic: $("#gamePic"), pics: $("#gamePics"), bar: $("#timerBar"), feedback: $("#gameFeedback"),
       start: $("#gameStart"), next: $("#gameNext"), speakBtn: $("#gameSpeak"),
       answers: $$(".ans"),
@@ -370,13 +370,13 @@
     const settings = store.get(SETTINGS_KEY, {});
     // Only restore a saved time that is still offered (older versions had 3/8/12 s).
     if ([...el.seconds.options].some((o) => o.value === String(settings.seconds))) el.seconds.value = settings.seconds;
-    el.hint.checked = !!settings.hint;
+    el.hint.checked = settings.showEnglish !== false; // on by default
     el.auto.checked = settings.auto !== false;
     el.pics.checked = settings.pics !== false;
     el.autoSpeak.checked = settings.autoSpeak !== false;
 
     function saveSettings() {
-      store.set(SETTINGS_KEY, { seconds: el.seconds.value, hint: el.hint.checked, auto: el.auto.checked, pics: el.pics.checked, autoSpeak: el.autoSpeak.checked });
+      store.set(SETTINGS_KEY, { seconds: el.seconds.value, showEnglish: el.hint.checked, auto: el.auto.checked, pics: el.pics.checked, autoSpeak: el.autoSpeak.checked });
     }
     [el.seconds, el.hint, el.auto, el.pics, el.autoSpeak].forEach((x) => x.addEventListener("change", () => {
       saveSettings();
@@ -471,6 +471,8 @@
       el.article.textContent = "?";
       el.article.className = "game-article";
       el.word.innerHTML = sylHtml(current.noun);
+      el.verdict.textContent = "";
+      el.verdict.className = "verdict";
       el.feedback.textContent = "Welcher Artikel passt? · Which article fits?";
       el.feedback.style.color = "";
       el.answers.forEach((b) => { b.disabled = false; b.classList.remove("correct", "wrong"); });
@@ -513,18 +515,13 @@
         else if (b.dataset.art === choice) b.classList.add("wrong");
       });
 
-      const praise = ["Super! · Great! 🎉", "Richtig! · Correct! ⭐", "Toll gemacht! · Well done! 👏", "Klasse! · Awesome! 🚀", "Prima! · Brilliant! 😊"];
-      if (ok) {
-        el.feedback.textContent = stats.streak >= 5 && stats.streak % 5 === 0
-          ? `${stats.streak} richtig in Folge! · ${stats.streak} in a row! 🔥` : praise[Math.floor(Math.random() * praise.length)];
-        el.feedback.style.color = "var(--das)";
-      } else if (choice) {
-        el.feedback.textContent = `Leider falsch – es heißt „${art} ${current.noun}“. · Wrong – it's "${art} ${current.noun}".`;
-        el.feedback.style.color = "var(--die)";
-      } else {
-        el.feedback.textContent = `⏰ Zeit abgelaufen – es heißt „${art} ${current.noun}“. · Time's up – it's "${art} ${current.noun}".`;
-        el.feedback.style.color = "var(--muted)";
-      }
+      // Big ✓ / ✗ / ⏰ right next to the word; the article in front already shows the right answer.
+      el.verdict.textContent = ok ? "✓" : choice ? "✗" : "⏰";
+      el.verdict.className = `verdict show ${ok ? "ok" : choice ? "bad" : "time"}`;
+      el.verdict.title = ok ? "Richtig · Correct" : choice ? `Falsch – richtig ist „${art}“ · Wrong – it's "${art}"` : "Zeit abgelaufen · Time's up";
+      el.feedback.textContent = ok && stats.streak >= 5 && stats.streak % 5 === 0 ? `${stats.streak} richtig in Folge! · ${stats.streak} in a row! 🔥`
+        : !ok && !choice ? "⏰ Zeit abgelaufen · Time's up" : "";
+      el.feedback.style.color = ok ? "var(--das)" : "var(--muted)";
 
       el.next.hidden = false;
       if (el.autoSpeak.checked) speak(`${art} ${current.noun}`, el.speakBtn);
@@ -1667,6 +1664,42 @@
   }
 
   refreshAll();
+
+  /* ------------------------------------------------------------------ */
+  /* Donation (behind a simple parent check)                             */
+  /* ------------------------------------------------------------------ */
+
+  // Your PayPal.me link. Leave empty to hide the donation button.
+  const DONATION_URL = "";
+
+  (() => {
+    const btns = [$("#supportBtn"), $("#supportLink")];
+    if (!DONATION_URL) return; // not configured yet: keep everything hidden
+    btns.forEach((b) => { b.hidden = false; });
+    const dlg = $("#supportDialog");
+    const q = $("#supportQ"), a = $("#supportA"), msg = $("#supportMsg");
+    let answer = 0;
+    function open() {
+      // A sum that young children can't easily solve, so they don't land on a payment page by accident.
+      const x = 6 + Math.floor(Math.random() * 4), y = 6 + Math.floor(Math.random() * 4);
+      answer = x * y;
+      q.textContent = `${x} × ${y} = ?`;
+      a.value = ""; msg.textContent = "";
+      $("#supportGate").hidden = false; $("#supportOpen").hidden = true;
+      $("#supportPaypal").href = DONATION_URL;
+      dlg.showModal();
+      a.focus();
+    }
+    function check() {
+      if (Number(a.value.trim()) === answer) { $("#supportGate").hidden = true; $("#supportOpen").hidden = false; }
+      else { msg.textContent = "Leider nicht richtig. · Not quite – please ask an adult."; a.select(); }
+    }
+    btns.forEach((b) => b.addEventListener("click", open));
+    $("#supportCheck").addEventListener("click", check);
+    a.addEventListener("keydown", (ev) => { if (ev.key === "Enter") check(); });
+    $("#supportClose").addEventListener("click", () => dlg.close());
+    dlg.addEventListener("click", (ev) => { if (ev.target === dlg) dlg.close(); });
+  })();
 
   /* ------------------------------------------------------------------ */
   /* Installable app (PWA)                                               */

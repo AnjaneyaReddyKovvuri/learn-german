@@ -141,7 +141,7 @@ label.check { font-weight: 600; cursor: pointer; }
 .game-article.c-die { color: var(--die); }
 .game-article.c-das { color: var(--das); }
 @keyframes pop { 0% { transform: scale(.4); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
-.game-hint { color: var(--muted); font-size: 1.1rem; min-height: 1.6em; }
+.game-hint { color: var(--muted); font-size: 1.3rem; font-weight: 600; min-height: 1.6em; }
 .timer { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 20px auto; max-width: 520px; }
 .timer-bar { height: 100%; width: 100%; background: var(--accent); transform-origin: left; }
 .game-feedback { min-height: 1.8em; font-size: 1.15rem; font-weight: 700; margin-bottom: 18px; }
@@ -163,7 +163,17 @@ label.check { font-weight: 600; cursor: pointer; }
 .ans.wrong { background: #f1f5f9; text-decoration: line-through; opacity: 1; }
 .game-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 /* Paused: hide the word and picture so nobody can think ahead. */
-.game-card.paused .game-word, .game-card.paused .game-pic, .game-card.paused .game-hint { filter: blur(14px); opacity: .6; transition: filter .2s; }
+.game-card.paused .answer-buttons { opacity: .5; }
+/* Big ✓ / ✗ / ⏰ next to the word after answering. */
+.verdict { display: none; }
+.verdict.show {
+  display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;
+  width: 1.15em; height: 1.15em; margin-left: .3em; border-radius: 50%; font-size: .75em; font-weight: 900;
+  color: #fff; animation: pop .35s ease;
+}
+.verdict.ok { background: var(--das); }
+.verdict.bad { background: var(--die); }
+.verdict.time { background: #e2e8f0; color: var(--ink); }
 .game-card.paused .timer-bar { background: var(--muted); }
 
 /* ---------- Browse ---------- */
@@ -390,6 +400,16 @@ th.k-nom, th.k-akk, th.k-dat, th.k-gen { border-bottom-width: 1px; border-bottom
 .paper.colored .a-das { color: var(--das); }
 .paper.colored .trace .art { color: #cbd5e1; }
 
+/* ---------- Donation ---------- */
+.support-btn { padding: 6px 14px; border-color: #f59e0b; color: #92400e; background: #fffbeb; }
+.support-btn:hover { border-color: #d97706; }
+.site-footer { text-align: center; color: var(--muted); font-size: .9rem; padding: 0 16px 28px; }
+.linklike { border: 0; background: none; color: var(--accent); font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0 4px; }
+.support-dialog { width: min(520px, calc(100vw - 32px)); }
+.support-row { display: flex; gap: 8px; }
+.support-row input { width: 7rem; font-size: 1.2rem; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.support-paypal { display: inline-block; text-decoration: none; font-size: 1.1rem; }
+
 /* ---------- Install button ---------- */
 .install-btn { background: var(--accent); border-color: var(--accent); color: #fff; padding: 6px 14px; }
 
@@ -428,6 +448,7 @@ th.k-nom, th.k-akk, th.k-dat, th.k-gen { border-bottom-width: 1px; border-bottom
 }
 
 @media print {
+  .site-footer,
   .topbar, .cursive-controls, .btn-row, .toast { display: none !important; }
   body { background: #fff; }
   .card { box-shadow: none; }

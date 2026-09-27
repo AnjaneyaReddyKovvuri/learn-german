@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anshi German">
-  <link rel="stylesheet" href="css/fonts.css?v=3c09e68bdd">
-  <link rel="stylesheet" href="css/style.css?v=3c09e68bdd">
+  <link rel="stylesheet" href="css/fonts.css?v=28a6e77ed3">
+  <link rel="stylesheet" href="css/style.css?v=28a6e77ed3">
 </head>
 <body>
   <header class="topbar">
@@ -31,6 +31,7 @@
         </select>
       </label>
     </div>
+    <button class="btn support-btn" id="supportBtn" hidden title="Diese App unterstützen · Support this app">☕ Unterstützen · Support</button>
     <button class="btn install-btn" id="installBtn" hidden title="Als App installieren · Install as an app">📲 Installieren · Install</button>
     <label class="check syl-toggle" title="Silbenbögen unter den Wörtern · Syllable arcs under words"><input type="checkbox" id="sylToggle"> <span class="syl-icon">◡◡</span> Silben <small class="en">syllables</small></label>
     <nav class="tabs" role="tablist">
@@ -60,7 +61,7 @@
             <option value="60">60 s</option>
           </select>
         </label>
-        <label class="check"><input type="checkbox" id="gameHint"> Englisch zeigen <small class="en">Show English</small></label>
+        <label class="check"><input type="checkbox" id="gameHint" checked> Englisch zeigen <small class="en">Show English</small></label>
         <label class="check"><input type="checkbox" id="gamePics" checked> Bilder <small class="en">Pictures</small></label>
         <label class="check"><input type="checkbox" id="gameAuto" checked> Automatisch weiter <small class="en">Auto-next</small></label>
         <label class="check"><input type="checkbox" id="gameAutoSpeak" checked> Antwort vorlesen <small class="en">Speak the answer</small></label>
@@ -71,7 +72,7 @@
       <div class="game-card card" id="gameCard">
         <div class="game-cat" id="gameCat"></div>
         <div class="game-pic" id="gamePic"></div>
-        <div class="game-word"><span class="game-article" id="gameArticle">?</span> <span id="gameWord" class="sayable" title="Anhören · Listen">Los geht's!</span></div>
+        <div class="game-word"><span class="game-article" id="gameArticle">?</span> <span id="gameWord" class="sayable" title="Anhören · Listen">Los geht's!</span><span class="verdict" id="gameVerdict" aria-live="polite"></span></div>
         <div class="game-hint" id="gameHintText"></div>
         <div class="timer"><div class="timer-bar" id="timerBar"></div></div>
         <div class="game-feedback" id="gameFeedback">Drücke <b>Start</b> – dann wähle <b>der</b>, <b>die</b> oder <b>das</b>.<br><small class="en">Press Start, then choose der, die or das.</small></div>
@@ -456,27 +457,53 @@
     </section>
   </main>
 
+  <footer class="site-footer" id="siteFooter">
+    <p>Diese App ist kostenlos und ohne Werbung. · This app is free and ad-free.
+      <button class="linklike" id="supportLink" hidden>☕ Unterstützen · Support it</button></p>
+  </footer>
+
+  <dialog id="supportDialog" class="verb-dialog support-dialog">
+    <div class="vd-head">
+      <div class="vd-title"><h2>☕ Für Eltern · For parents</h2></div>
+      <button class="btn" id="supportClose" title="Schließen · Close">✕</button>
+    </div>
+    <p>Diese App ist kostenlos, ohne Werbung und ohne Tracking. Wenn sie Ihnen gefällt, können Sie die Entwicklung mit einer kleinen Spende unterstützen.<br>
+      <small class="muted">This app is free, with no ads and no tracking. If you like it, you can support its development with a small donation.</small></p>
+    <div id="supportGate">
+      <p><b>Kurze Frage für Erwachsene · Quick question for adults:</b> <span id="supportQ"></span></p>
+      <div class="support-row">
+        <input type="text" inputmode="numeric" id="supportA" autocomplete="off" aria-label="Antwort · Answer" placeholder="?">
+        <button class="btn" id="supportCheck">OK</button>
+      </div>
+      <p class="muted" id="supportMsg"></p>
+    </div>
+    <div id="supportOpen" hidden>
+      <p><a class="btn primary support-paypal" id="supportPaypal" href="#" target="_blank" rel="noopener">💙 Mit PayPal spenden · Donate with PayPal</a></p>
+      <p class="muted">Öffnet PayPal in einem neuen Fenster. Vielen Dank! 🙏 · Opens PayPal in a new window. Thank you!</p>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" hidden></div>
 
-  <script src="vendor/xlsx.full.min.js?v=3c09e68bdd"></script>
-  <script src="vendor/hyph-de-1996.js?v=3c09e68bdd"></script>
-  <script src="js/data/01-people-body-food.js?v=3c09e68bdd"></script>
-  <script src="js/data/02-home-school-toys.js?v=3c09e68bdd"></script>
-  <script src="js/data/03-animals-nature.js?v=3c09e68bdd"></script>
-  <script src="js/data/04-city-traffic-travel-jobs.js?v=3c09e68bdd"></script>
-  <script src="js/data/05-leisure-sport-art-time.js?v=3c09e68bdd"></script>
-  <script src="js/data/06-tech-tools-money-work-language.js?v=3c09e68bdd"></script>
-  <script src="js/data/07-feelings-society-science-fantasy.js?v=3c09e68bdd"></script>
-  <script src="js/data/08-everyday-common.js?v=3c09e68bdd"></script>
-  <script src="js/data/09-extended-nouns.js?v=3c09e68bdd"></script>
-  <script src="js/data/plurals.js?v=3c09e68bdd"></script>
-  <script src="js/data/words.js?v=3c09e68bdd"></script>
-  <script src="js/data/examples.js?v=3c09e68bdd"></script>
-  <script src="js/data/ranks.js?v=3c09e68bdd"></script>
-  <script src="js/data/syllables.js?v=3c09e68bdd"></script>
-  <script src="js/data/pictures.js?v=3c09e68bdd"></script>
-  <script src="js/data/cases.js?v=3c09e68bdd"></script>
-  <script src="js/data/verbs.js?v=3c09e68bdd"></script>
-  <script src="js/app.js?v=3c09e68bdd"></script>
+  <script src="vendor/xlsx.full.min.js?v=28a6e77ed3"></script>
+  <script src="vendor/hyph-de-1996.js?v=28a6e77ed3"></script>
+  <script src="js/data/01-people-body-food.js?v=28a6e77ed3"></script>
+  <script src="js/data/02-home-school-toys.js?v=28a6e77ed3"></script>
+  <script src="js/data/03-animals-nature.js?v=28a6e77ed3"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=28a6e77ed3"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=28a6e77ed3"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=28a6e77ed3"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=28a6e77ed3"></script>
+  <script src="js/data/08-everyday-common.js?v=28a6e77ed3"></script>
+  <script src="js/data/09-extended-nouns.js?v=28a6e77ed3"></script>
+  <script src="js/data/plurals.js?v=28a6e77ed3"></script>
+  <script src="js/data/words.js?v=28a6e77ed3"></script>
+  <script src="js/data/examples.js?v=28a6e77ed3"></script>
+  <script src="js/data/ranks.js?v=28a6e77ed3"></script>
+  <script src="js/data/syllables.js?v=28a6e77ed3"></script>
+  <script src="js/data/pictures.js?v=28a6e77ed3"></script>
+  <script src="js/data/cases.js?v=28a6e77ed3"></script>
+  <script src="js/data/verbs.js?v=28a6e77ed3"></script>
+  <script src="js/app.js?v=28a6e77ed3"></script>
 </body>
 </html>
