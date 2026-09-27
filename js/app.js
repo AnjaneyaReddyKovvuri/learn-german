@@ -361,6 +361,11 @@
     let timeoutId = null;
     let advanceId = null;
     let running = false;
+    let paused = false;
+    let timerEnd = 0;        // when the current question's time runs out (ms timestamp)
+    let remainingMs = 0;     // time left when paused
+    let pausedFeedback = null;
+    const pauseBtn = $("#gamePause");
 
     const settings = store.get(SETTINGS_KEY, {});
     // Only restore a saved time that is still offered (older versions had 3/8/12 s).
@@ -436,14 +441,15 @@
       clearTimeout(advanceId);
     }
 
-    function startTimer() {
-      const secs = Number(el.seconds.value);
+    // Run the timer bar from `fromScale` (1 = full) down to 0 over `ms`.
+    function startTimer(ms = Number(el.seconds.value) * 1000, fromScale = 1) {
       el.bar.style.transition = "none";
-      el.bar.style.transform = "scaleX(1)";
+      el.bar.style.transform = `scaleX(${fromScale})`;
       void el.bar.offsetWidth; // restart the transition
-      el.bar.style.transition = `transform ${secs}s linear`;
+      el.bar.style.transition = `transform ${ms / 1000}s linear`;
       el.bar.style.transform = "scaleX(0)";
-      timeoutId = setTimeout(() => finish(null), secs * 1000);
+      timerEnd = Date.now() + ms;
+      timeoutId = setTimeout(() => finish(null), ms);
     }
 
     function stopTimerBar() {
@@ -454,6 +460,7 @@
 
     function next() {
       clearTimers();
+      if (paused) clearPauseState();
       const words = pool();
       if (!words.length) { toast("Keine Wörter in dieser Kategorie. · No words in this category."); return; }
       running = true;
@@ -469,13 +476,14 @@
       el.answers.forEach((b) => { b.disabled = false; b.classList.remove("correct", "wrong"); });
       el.start.hidden = true;
       el.next.hidden = true;
+      pauseBtn.hidden = false;
       renderHint();
       renderPic();
       startTimer();
     }
 
     function finish(choice) {
-      if (answered) return;
+      if (answered || paused) return;
       answered = true;
       clearTimers();
       stopTimerBar();
@@ -524,17 +532,45 @@
       if (el.auto.checked) advanceId = setTimeout(next, (ok ? 1800 : 3200) + (el.autoSpeak.checked ? 600 : 0));
     }
 
+    // Pause: freeze the timer (or the auto-advance) and hide the word; resume continues where it stopped.
     function pause() {
-      if (!running) return;
+      if (!running || paused) return;
+      paused = true;
+      if (hasSpeech) { speakToken++; speechSynthesis.cancel(); }
       clearTimers();
       if (!answered) {
+        remainingMs = Math.max(0, timerEnd - Date.now());
         stopTimerBar();
-        answered = true;
         el.answers.forEach((b) => { b.disabled = true; });
-        el.feedback.textContent = "Pause – drücke „Weiter“. · Paused – press Next.";
       }
-      el.next.hidden = false;
+      pausedFeedback = { text: el.feedback.textContent, color: el.feedback.style.color };
+      el.feedback.textContent = "⏸ Pausiert – drücke „Weiter“ · Paused – press Resume";
+      el.feedback.style.color = "var(--muted)";
+      el.card.classList.add("paused");
+      pauseBtn.textContent = "▶ Weiter · Resume";
+      pauseBtn.classList.add("primary");
     }
+
+    function clearPauseState() {
+      paused = false;
+      el.card.classList.remove("paused");
+      pauseBtn.textContent = "⏸ Pause";
+      pauseBtn.classList.remove("primary");
+    }
+
+    function resume() {
+      if (!paused) return;
+      clearPauseState();
+      if (pausedFeedback) { el.feedback.textContent = pausedFeedback.text; el.feedback.style.color = pausedFeedback.color; }
+      if (!answered) {
+        el.answers.forEach((b) => { b.disabled = false; });
+        const m = getComputedStyle(el.bar).transform.match(/matrix\(([^,]+)/);
+        startTimer(remainingMs, m ? Number(m[1]) : 1);
+      } else if (el.auto.checked) {
+        advanceId = setTimeout(next, 1200);
+      }
+    }
+    const togglePause = () => (paused ? resume() : pause());
 
     function startWith(category) {
       el.category.value = category || "";
@@ -543,6 +579,9 @@
     }
 
     el.start.addEventListener("click", next);
+    pauseBtn.addEventListener("click", togglePause);
+    // Pause automatically when the app goes to the background (other app, screen off).
+    document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
     el.next.addEventListener("click", next);
     el.answers.forEach((b) => b.addEventListener("click", () => finish(b.dataset.art)));
     // Before answering only the noun is spoken, so the article isn't given away.
@@ -562,6 +601,8 @@
     document.addEventListener("keydown", (ev) => {
       if (!$("#tab-game").classList.contains("active")) return;
       if (ev.target.matches("input, select, textarea")) return;
+      if (ev.key === "p" || ev.key === "P") { if (running) { togglePause(); ev.preventDefault(); } return; }
+      if (paused) { if (ev.key === "Enter" || ev.key === " ") { resume(); ev.preventDefault(); } return; }
       if (["1", "2", "3"].includes(ev.key) && !answered) { finish(ARTICLES[Number(ev.key) - 1]); ev.preventDefault(); }
       else if (ev.key === "Enter" || ev.key === " ") {
         if (answered) { next(); ev.preventDefault(); }

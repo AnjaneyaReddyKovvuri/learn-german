@@ -162,6 +162,9 @@ label.check { font-weight: 600; cursor: pointer; }
 .ans-das.correct { background: var(--das); }
 .ans.wrong { background: #f1f5f9; text-decoration: line-through; opacity: 1; }
 .game-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+/* Paused: hide the word and picture so nobody can think ahead. */
+.game-card.paused .game-word, .game-card.paused .game-pic, .game-card.paused .game-hint { filter: blur(14px); opacity: .6; transition: filter .2s; }
+.game-card.paused .timer-bar { background: var(--muted); }
 
 /* ---------- Browse ---------- */
 .browse-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }

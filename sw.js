@@ -1,6 +1,6 @@
 /* Service worker: keeps every app file on the device so the app starts fast and works offline.
    VERSION and FILES are written by scripts/update_version.py – run it after changing any app file. */
-const VERSION = "312929d2d2";
+const VERSION = "7c84c3bc7f";
 const FILES = [
   "./",
   "./css/fonts.css",
@@ -43,7 +43,13 @@ const FILES = [
 const CACHE = "artikel-" + VERSION;
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: "reload" skips the browser's HTTP cache (GitHub Pages keeps files 10 minutes),
+  // so a new version never mixes new and old files.
+  event.waitUntil(
+    caches.open(CACHE)
+      .then((cache) => cache.addAll(FILES.map((url) => new Request(url, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (event) => {

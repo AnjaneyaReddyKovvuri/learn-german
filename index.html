@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anshi German">
-  <link rel="stylesheet" href="css/fonts.css?v=312929d2d2">
-  <link rel="stylesheet" href="css/style.css?v=312929d2d2">
+  <link rel="stylesheet" href="css/fonts.css?v=7c84c3bc7f">
+  <link rel="stylesheet" href="css/style.css?v=7c84c3bc7f">
 </head>
 <body>
   <header class="topbar">
@@ -82,6 +82,7 @@
         <div class="game-controls">
           <button class="btn primary" id="gameStart">▶ Start</button>
           <button class="btn" id="gameNext" hidden>Weiter · Next ⏎</button>
+          <button class="btn pause-btn" id="gamePause" hidden title="Pause (Taste P)">⏸ Pause</button>
           <button class="btn" id="gameSpeak" title="Anhören · Listen">🔊 Anhören · Listen</button>
           <button class="btn" id="gameSpeakSyl" title="In Silben anhören · Listen syllable by syllable">◡ Silben · syllables</button>
         </div>
@@ -93,7 +94,7 @@
         <div class="score"><span id="scBest">0</span><small>Rekord · best 🏆</small></div>
       </div>
       </div>
-      <p class="muted center">Tipp: Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> zum Antworten, <kbd>Enter</kbd> für das nächste Wort.<br><small>Tip: keys 1 2 3 to answer, Enter for the next word.</small></p>
+      <p class="muted center">Tipp: Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> zum Antworten, <kbd>Enter</kbd> für das nächste Wort, <kbd>P</kbd> für Pause.<br><small>Tip: keys 1 2 3 to answer, Enter for the next word, P to pause.</small></p>
     </section>
 
     <!-- ============ BROWSE ============ -->
@@ -283,24 +284,24 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="vendor/xlsx.full.min.js?v=312929d2d2"></script>
-  <script src="vendor/hyph-de-1996.js?v=312929d2d2"></script>
-  <script src="js/data/01-people-body-food.js?v=312929d2d2"></script>
-  <script src="js/data/02-home-school-toys.js?v=312929d2d2"></script>
-  <script src="js/data/03-animals-nature.js?v=312929d2d2"></script>
-  <script src="js/data/04-city-traffic-travel-jobs.js?v=312929d2d2"></script>
-  <script src="js/data/05-leisure-sport-art-time.js?v=312929d2d2"></script>
-  <script src="js/data/06-tech-tools-money-work-language.js?v=312929d2d2"></script>
-  <script src="js/data/07-feelings-society-science-fantasy.js?v=312929d2d2"></script>
-  <script src="js/data/08-everyday-common.js?v=312929d2d2"></script>
-  <script src="js/data/09-extended-nouns.js?v=312929d2d2"></script>
-  <script src="js/data/plurals.js?v=312929d2d2"></script>
-  <script src="js/data/words.js?v=312929d2d2"></script>
-  <script src="js/data/examples.js?v=312929d2d2"></script>
-  <script src="js/data/ranks.js?v=312929d2d2"></script>
-  <script src="js/data/syllables.js?v=312929d2d2"></script>
-  <script src="js/data/pictures.js?v=312929d2d2"></script>
-  <script src="js/data/verbs.js?v=312929d2d2"></script>
-  <script src="js/app.js?v=312929d2d2"></script>
+  <script src="vendor/xlsx.full.min.js?v=7c84c3bc7f"></script>
+  <script src="vendor/hyph-de-1996.js?v=7c84c3bc7f"></script>
+  <script src="js/data/01-people-body-food.js?v=7c84c3bc7f"></script>
+  <script src="js/data/02-home-school-toys.js?v=7c84c3bc7f"></script>
+  <script src="js/data/03-animals-nature.js?v=7c84c3bc7f"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=7c84c3bc7f"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=7c84c3bc7f"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=7c84c3bc7f"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=7c84c3bc7f"></script>
+  <script src="js/data/08-everyday-common.js?v=7c84c3bc7f"></script>
+  <script src="js/data/09-extended-nouns.js?v=7c84c3bc7f"></script>
+  <script src="js/data/plurals.js?v=7c84c3bc7f"></script>
+  <script src="js/data/words.js?v=7c84c3bc7f"></script>
+  <script src="js/data/examples.js?v=7c84c3bc7f"></script>
+  <script src="js/data/ranks.js?v=7c84c3bc7f"></script>
+  <script src="js/data/syllables.js?v=7c84c3bc7f"></script>
+  <script src="js/data/pictures.js?v=7c84c3bc7f"></script>
+  <script src="js/data/verbs.js?v=7c84c3bc7f"></script>
+  <script src="js/app.js?v=7c84c3bc7f"></script>
 </body>
 </html>
