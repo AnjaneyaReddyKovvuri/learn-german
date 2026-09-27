@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Der Die Das – Artikel-Trainer</title>
+  <meta name="theme-color" content="#14213d">
+  <meta name="description" content="Deutsche Artikel, Wörter, Verben und Schreibschrift üben · Practise German articles, words, verbs and cursive.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Artikel">
+  <link rel="stylesheet" href="css/fonts.css?v=4ede27c25f">
+  <link rel="stylesheet" href="css/style.css?v=4ede27c25f">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badges"><b class="c-der">der</b><b class="c-die">die</b><b class="c-das">das</b></span>
+      <span class="brand-name">Artikel-Trainer</span>
+    </div>
+    <div class="voice-bar" id="voiceBar">
+      <label title="Stimme für die Aussprache · Voice for pronunciation">🔊 <select id="voiceSelect" aria-label="Stimme · Voice"></select></label>
+      <label class="check" title="Langsam sprechen · Speak slowly"><input type="checkbox" id="voiceSlow"> 🐢 <small class="en">langsam · slow</small></label>
+      <label title="Aussprache: ganze Wörter oder Silbe für Silbe · Pronunciation: whole words or syllable by syllable">
+        <select id="voiceMode" aria-label="Aussprache · Pronunciation">
+          <option value="normal">🗣️ normal</option>
+          <option value="syl">◡ in Silben · by syllables</option>
+        </select>
+      </label>
+    </div>
+    <button class="btn install-btn" id="installBtn" hidden title="Als App installieren · Install as an app">📲 Installieren · Install</button>
+    <label class="check syl-toggle" title="Silbenbögen unter den Wörtern · Syllable arcs under words"><input type="checkbox" id="sylToggle"> <span class="syl-icon">◡◡</span> Silben <small class="en">syllables</small></label>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="game" role="tab">🎮 Spiel <small>Game</small></button>
+      <button class="tab" data-tab="browse" role="tab">📚 Nomen Wörter <small>Nouns</small></button>
+      <button class="tab" data-tab="dict" role="tab">📖 Wörterbuch <small>Dictionary</small></button>
+      <button class="tab" data-tab="verbs" role="tab">🔤 Verben <small>Verbs</small></button>
+      <button class="tab" data-tab="upload" role="tab">📤 Hinzufügen <small>Add words</small></button>
+      <button class="tab" data-tab="cursive" role="tab">✍️ Schreibschrift <small>Cursive</small></button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ GAME ============ -->
+    <section id="tab-game" class="panel active">
+      <div class="game-settings card">
+        <label>Kategorie <small class="en">Category</small>
+          <select id="gameCategory"></select>
+        </label>
+        <label>Zeit <small class="en">Time</small>
+          <select id="gameSeconds">
+            <option value="5">5 s</option>
+            <option value="10">10 s</option>
+            <option value="20" selected>20 s</option>
+            <option value="30">30 s</option>
+            <option value="60">60 s</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="gameHint"> Englisch zeigen <small class="en">Show English</small></label>
+        <label class="check"><input type="checkbox" id="gamePics" checked> Bilder <small class="en">Pictures</small></label>
+        <label class="check"><input type="checkbox" id="gameAuto" checked> Automatisch weiter <small class="en">Auto-next</small></label>
+        <label class="check"><input type="checkbox" id="gameAutoSpeak" checked> Antwort vorlesen <small class="en">Speak the answer</small></label>
+        <label class="check"><input type="checkbox" id="gameMistakes"> Nur Fehler üben <small class="en">Practise mistakes only</small></label>
+      </div>
+
+      <div class="scoreboard">
+        <div class="score"><span id="scCorrect">0</span><small>richtig · correct</small></div>
+        <div class="score"><span id="scWrong">0</span><small>falsch · wrong</small></div>
+        <div class="score"><span id="scStreak">0</span><small>Serie · streak 🔥</small></div>
+        <div class="score"><span id="scBest">0</span><small>Rekord · best 🏆</small></div>
+      </div>
+
+      <div class="game-card card" id="gameCard">
+        <div class="game-cat" id="gameCat"></div>
+        <div class="game-pic" id="gamePic"></div>
+        <div class="game-word"><span class="game-article" id="gameArticle">?</span> <span id="gameWord" class="sayable" title="Anhören · Listen">Los geht's!</span></div>
+        <div class="game-hint" id="gameHintText"></div>
+        <div class="timer"><div class="timer-bar" id="timerBar"></div></div>
+        <div class="game-feedback" id="gameFeedback">Drücke <b>Start</b> – dann wähle <b>der</b>, <b>die</b> oder <b>das</b>.<br><small class="en">Press Start, then choose der, die or das.</small></div>
+        <div class="answer-buttons">
+          <button class="ans ans-der" data-art="der" disabled>der <kbd>1</kbd></button>
+          <button class="ans ans-die" data-art="die" disabled>die <kbd>2</kbd></button>
+          <button class="ans ans-das" data-art="das" disabled>das <kbd>3</kbd></button>
+        </div>
+        <div class="game-controls">
+          <button class="btn primary" id="gameStart">▶ Start</button>
+          <button class="btn" id="gameNext" hidden>Weiter · Next ⏎</button>
+          <button class="btn" id="gameSpeak" title="Anhören · Listen">🔊 Anhören · Listen</button>
+          <button class="btn" id="gameSpeakSyl" title="In Silben anhören · Listen syllable by syllable">◡ Silben · syllables</button>
+        </div>
+      </div>
+      <p class="muted center">Tipp: Tasten <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> zum Antworten, <kbd>Enter</kbd> für das nächste Wort.<br><small>Tip: keys 1 2 3 to answer, Enter for the next word.</small></p>
+    </section>
+
+    <!-- ============ BROWSE ============ -->
+    <section id="tab-browse" class="panel">
+      <div class="browse-head">
+        <input type="search" id="browseSearch" placeholder="🔎 Wort suchen · Search (German or English)…">
+        <div class="chip-row" id="articleFilter">
+          <button class="chip active" data-art="">alle · all</button>
+          <button class="chip c-der" data-art="der">der</button>
+          <button class="chip c-die" data-art="die">die</button>
+          <button class="chip c-das" data-art="das">das</button>
+        </div>
+      </div>
+      <div id="browseCategories" class="cat-grid"></div>
+      <div id="browseList" hidden>
+        <div class="list-head">
+          <button class="btn" id="browseBack">← Kategorien · Categories</button>
+          <h2 id="browseTitle"></h2>
+          <span class="muted" id="browseCount"></span>
+          <button class="btn" id="browsePractice">🎮 Üben · Practise</button>
+        </div>
+        <div id="browseWords" class="word-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============ DICTIONARY ============ -->
+    <section id="tab-dict" class="panel">
+      <div class="browse-head">
+        <input type="search" id="dictSearch" placeholder="🔎 Wort suchen · Search any word (German or English)…">
+        <label>Sortierung <small class="en">Sort</small>
+          <select id="dictSort">
+            <option value="abc">A–Z</option>
+            <option value="freq">Häufigkeit · frequency</option>
+          </select>
+        </label>
+      </div>
+      <div class="chip-row verb-filters" id="dictTypes">
+        <button class="chip active" data-type="">alle · all</button>
+        <button class="chip" data-type="n">Nomen · nouns</button>
+        <button class="chip" data-type="v">Verben · verbs</button>
+        <button class="chip" data-type="adj">Adjektive · adjectives</button>
+        <button class="chip" data-type="adv">Adverbien · adverbs</button>
+        <button class="chip" data-type="small">Kleine Wörter · small words</button>
+        <button class="chip" data-top="1" id="dictTop">⭐ Top 5000</button>
+      </div>
+      <div class="az" id="dictAZ"></div>
+      <p class="muted" id="dictCount"></p>
+      <div id="dictList" class="word-grid"></div>
+      <div class="center"><button class="btn" id="dictMore" hidden>Mehr anzeigen · Show more</button></div>
+      <p class="muted small-print">Beispielsätze von <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR) · Wortdaten aus Wiktionary (CC BY-SA).</p>
+    </section>
+
+    <dialog id="dictDialog" class="verb-dialog dict-dialog">
+      <div class="vd-head">
+        <div class="vd-title">
+          <div class="dd-pic" id="ddPic"></div>
+          <h2 id="ddWord"></h2>
+          <div class="muted" id="ddEn"></div>
+        </div>
+        <button class="btn" id="ddSpeak" title="Anhören · Listen">🔊</button>
+        <button class="btn" id="ddSpeakSyl" title="In Silben anhören · Listen syllable by syllable">◡ Silben</button>
+        <button class="btn" id="ddClose" title="Schließen · Close">✕</button>
+      </div>
+      <div class="vd-tags" id="ddTags"></div>
+      <div id="ddBody"></div>
+      <div id="ddExamples"></div>
+    </dialog>
+
+    <!-- ============ VERBS ============ -->
+    <section id="tab-verbs" class="panel">
+      <div class="browse-head">
+        <input type="search" id="verbSearch" placeholder="🔎 Verb suchen · Search a verb (German or English)…">
+      </div>
+      <div class="chip-row verb-filters" id="verbRank">
+        <button class="chip active" data-rank="">alle · all</button>
+        <button class="chip" data-rank="100">Top 100</button>
+        <button class="chip" data-rank="200">101–200</button>
+        <button class="chip" data-rank="300">201–300</button>
+        <button class="chip" data-rank="500">301–500</button>
+        <button class="chip" data-rank="1000">501–1000</button>
+        <button class="chip" data-rank="9999">1000+</button>
+      </div>
+      <div class="chip-row verb-filters" id="verbTags">
+        <button class="chip" data-tag="irregular">⚡ unregelmäßig · irregular</button>
+        <button class="chip" data-tag="separable">✂️ trennbar · separable</button>
+        <button class="chip" data-tag="reflexive">🪞 reflexiv · reflexive</button>
+        <button class="chip" data-tag="modal">🔑 Modalverb · modal</button>
+        <button class="chip" data-tag="sein">🚶 Perfekt mit „sein“</button>
+      </div>
+      <p class="muted" id="verbCount"></p>
+      <div id="verbList" class="word-grid"></div>
+    </section>
+
+    <dialog id="verbDialog" class="verb-dialog">
+      <div class="vd-head">
+        <button class="btn" id="vdPrev" title="Vorheriges · Previous">←</button>
+        <div class="vd-title">
+          <h2 id="vdInf"></h2>
+          <div class="muted" id="vdEn"></div>
+        </div>
+        <button class="btn" id="vdNext" title="Nächstes · Next">→</button>
+        <button class="btn" id="vdSpeak" title="Anhören · Listen">🔊</button>
+        <button class="btn" id="vdSpeakSyl" title="In Silben anhören · Listen syllable by syllable">◡ Silben</button>
+        <button class="btn" id="vdClose" title="Schließen · Close">✕</button>
+      </div>
+      <div class="vd-tags" id="vdTags"></div>
+      <div class="vd-parts" id="vdParts"></div>
+      <div class="vd-grid" id="vdTables"></div>
+      <p class="muted vd-note">Klicke auf eine Zeile zum Anhören · Click a row to hear it. <span class="irr-sample">Orange</span> = unregelmäßige Form · irregular form.</p>
+    </dialog>
+
+    <!-- ============ UPLOAD ============ -->
+    <section id="tab-upload" class="panel">
+      <div class="card">
+        <h2>1. Vorlage herunterladen <small class="en">Download the template</small></h2>
+        <p>The Excel template has six columns: <b>Article</b> (der/die/das), <b>Noun</b>, <b>English</b> (optional), <b>Category</b> (optional – an existing or a new category), <b>Picture</b> (optional – an emoji like 🐶 or an image link starting with https://) and <b>Plural</b> (optional, e.g. Hunde).</p>
+        <table class="mini-table">
+          <tr><th>Article</th><th>Noun</th><th>English</th><th>Category</th><th>Picture</th><th>Plural</th></tr>
+          <tr><td>der</td><td>Tintenkiller</td><td>ink eraser</td><td>Schule &amp; Lernen</td><td>🖊️</td><td>Tintenkiller</td></tr>
+          <tr><td>die</td><td>Hängebrücke</td><td>suspension bridge</td><td>Meine Wörter</td><td>🌉</td><td>Hängebrücken</td></tr>
+          <tr><td>das</td><td>Fahrradschloss</td><td>bike lock</td><td>Verkehr &amp; Fahrzeuge</td><td>🔒</td><td>Fahrradschlösser</td></tr>
+        </table>
+        <button class="btn primary" id="downloadTemplate">⬇ Vorlage herunterladen · Download template (.xlsx)</button>
+      </div>
+
+      <div class="card">
+        <h2>2. Ausgefüllte Datei hochladen <small class="en">Upload the filled-in file</small></h2>
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden>
+          <span>📄 Datei hierher ziehen oder <u>auswählen</u> · Drop a file here or <u>choose one</u> (.xlsx, .xls, .csv)</span>
+        </label>
+        <div id="uploadPreview" hidden>
+          <p id="uploadSummary"></p>
+          <div class="table-wrap"><table class="data-table" id="uploadTable"></table></div>
+          <button class="btn primary" id="uploadConfirm">✔ Add</button>
+          <button class="btn" id="uploadCancel">Abbrechen · Cancel</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Meine Wörter <small class="en">My added words</small> <span class="muted" id="customCount"></span></h2>
+        <p class="muted">Deine Wörter werden in diesem Browser gespeichert. · Your words are saved in this browser.</p>
+        <div class="btn-row">
+          <button class="btn" id="exportCustom">⬇ Exportieren · Export</button>
+          <button class="btn danger" id="clearCustom">🗑 Alle löschen · Delete all</button>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="customTable"></table></div>
+      </div>
+    </section>
+
+    <!-- ============ CURSIVE ============ -->
+    <section id="tab-cursive" class="panel">
+      <div class="card cursive-controls">
+        <div class="cursive-input-row">
+          <input type="text" id="cursiveInput" placeholder="Deutsches Wort eingeben · Type a German word, e.g. Schmetterling" value="Schmetterling">
+          <div class="umlauts">
+            <button data-ch="ä">ä</button><button data-ch="ö">ö</button><button data-ch="ü">ü</button><button data-ch="ß">ß</button>
+            <button data-ch="Ä">Ä</button><button data-ch="Ö">Ö</button><button data-ch="Ü">Ü</button>
+          </div>
+        </div>
+        <div class="cursive-options">
+          <label>Schrift <small class="en">Font</small>
+            <select id="cursiveFont">
+              <option value="Playwrite DE SAS">Schulausgangsschrift (SAS)</option>
+              <option value="Playwrite DE VA">Vereinfachte Ausgangsschrift (VA)</option>
+              <option value="Playwrite DE LA">Lateinische Ausgangsschrift (LA)</option>
+              <option value="Playwrite DE Grund">Grundschrift (print)</option>
+            </select>
+          </label>
+          <label>Größe <small class="en">Size</small> <input type="range" id="cursiveSize" min="28" max="120" value="64"></label>
+          <label class="check"><input type="checkbox" id="cursiveArticle" checked> Artikel ergänzen <small class="en">Add article</small></label>
+          <label class="check"><input type="checkbox" id="cursiveLines" checked> Schreiblinien <small class="en">Writing lines</small></label>
+          <label class="check"><input type="checkbox" id="cursiveTrace"> Nachspuren <small class="en">Tracing sheet</small></label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="print-view" id="printView"></div>
+        <div class="paper" id="cursiveOut"></div>
+        <div class="btn-row">
+          <button class="btn" id="cursiveSpeak">🔊 Vorlesen · Read aloud</button>
+          <button class="btn" id="cursiveSpeakSyl">◡ In Silben · By syllables</button>
+          <button class="btn" id="cursivePrint">🖨 Drucken · Print</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="vendor/xlsx.full.min.js?v=4ede27c25f"></script>
+  <script src="vendor/hyph-de-1996.js?v=4ede27c25f"></script>
+  <script src="js/data/01-people-body-food.js?v=4ede27c25f"></script>
+  <script src="js/data/02-home-school-toys.js?v=4ede27c25f"></script>
+  <script src="js/data/03-animals-nature.js?v=4ede27c25f"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=4ede27c25f"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=4ede27c25f"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=4ede27c25f"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=4ede27c25f"></script>
+  <script src="js/data/08-everyday-common.js?v=4ede27c25f"></script>
+  <script src="js/data/09-extended-nouns.js?v=4ede27c25f"></script>
+  <script src="js/data/plurals.js?v=4ede27c25f"></script>
+  <script src="js/data/words.js?v=4ede27c25f"></script>
+  <script src="js/data/examples.js?v=4ede27c25f"></script>
+  <script src="js/data/ranks.js?v=4ede27c25f"></script>
+  <script src="js/data/syllables.js?v=4ede27c25f"></script>
+  <script src="js/data/pictures.js?v=4ede27c25f"></script>
+  <script src="js/data/verbs.js?v=4ede27c25f"></script>
+  <script src="js/app.js?v=4ede27c25f"></script>
+</body>
+</html>
