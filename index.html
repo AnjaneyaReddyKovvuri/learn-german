@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anshi German">
-  <link rel="stylesheet" href="css/fonts.css?v=7c84c3bc7f">
-  <link rel="stylesheet" href="css/style.css?v=7c84c3bc7f">
+  <link rel="stylesheet" href="css/fonts.css?v=3c09e68bdd">
+  <link rel="stylesheet" href="css/style.css?v=3c09e68bdd">
 </head>
 <body>
   <header class="topbar">
@@ -38,6 +38,7 @@
       <button class="tab" data-tab="browse" role="tab">📚 Nomen Wörter <small>Nouns</small></button>
       <button class="tab" data-tab="dict" role="tab">📖 Wörterbuch <small>Dictionary</small></button>
       <button class="tab" data-tab="verbs" role="tab">🔤 Verben <small>Verbs</small></button>
+      <button class="tab" data-tab="cases" role="tab">🧩 Fälle <small>Cases</small></button>
       <button class="tab" data-tab="upload" role="tab">📤 Hinzufügen <small>Add words</small></button>
       <button class="tab" data-tab="cursive" role="tab">✍️ Schreibschrift <small>Cursive</small></button>
     </nav>
@@ -206,6 +207,179 @@
       <p class="muted vd-note">Klicke auf eine Zeile zum Anhören · Click a row to hear it. <span class="irr-sample">Orange</span> = unregelmäßige Form · irregular form.</p>
     </dialog>
 
+    <!-- ============ CASES ============ -->
+    <section id="tab-cases" class="panel">
+      <div class="chip-row sub-tabs" id="caseNav">
+        <button class="chip active" data-sub="overview">🧭 Überblick · Overview</button>
+        <button class="chip" data-sub="tables">📋 Tabellen · Tables</button>
+        <button class="chip" data-sub="preps">📍 Präpositionen · Prepositions</button>
+        <button class="chip" data-sub="verbs">🤝 Verben mit Dativ · Dative verbs</button>
+        <button class="chip" data-sub="practice">🎯 Üben · Practice</button>
+      </div>
+
+      <!-- Overview -->
+      <div class="case-sub" id="case-overview">
+        <div class="case-grid">
+          <div class="case-card c-nom">
+            <div class="case-head"><h2>Nominativ</h2><span>nominative</span></div>
+            <p class="case-q">Wer? Was? <small>Who? What?</small></p>
+            <p>Das <b>Subjekt</b>: wer oder was etwas tut oder ist.<br><small class="muted">The subject: who or what does something.</small></p>
+            <p class="case-ex sayable" data-say="Der Hund bellt.">🐕 <span class="k-nom">Der Hund</span> bellt.<br><small class="muted">The dog barks.</small></p>
+          </div>
+          <div class="case-card c-akk">
+            <div class="case-head"><h2>Akkusativ</h2><span>accusative</span></div>
+            <p class="case-q">Wen? Was? <small>Whom? What?</small></p>
+            <p>Das <b>direkte Objekt</b>: wen oder was ich sehe, habe, kaufe …<br><small class="muted">The direct object.</small></p>
+            <p class="case-ex sayable" data-say="Ich sehe den Hund.">👀 Ich sehe <span class="k-akk">den Hund</span>.<br><small class="muted">I see the dog.</small></p>
+          </div>
+          <div class="case-card c-dat">
+            <div class="case-head"><h2>Dativ</h2><span>dative</span></div>
+            <p class="case-q">Wem? <small>To whom? For whom?</small></p>
+            <p>Das <b>indirekte Objekt</b>: wem ich etwas gebe, wem ich helfe.<br><small class="muted">The indirect object.</small></p>
+            <p class="case-ex sayable" data-say="Ich gebe dem Hund einen Knochen.">🦴 Ich gebe <span class="k-dat">dem Hund</span> einen Knochen.<br><small class="muted">I give the dog a bone.</small></p>
+          </div>
+          <div class="case-card c-gen">
+            <div class="case-head"><h2>Genitiv</h2><span>genitive</span></div>
+            <p class="case-q">Wessen? <small>Whose?</small></p>
+            <p><b>Besitz</b>: wem etwas gehört.<br><small class="muted">Possession: who something belongs to.</small></p>
+            <p class="case-ex sayable" data-say="Das ist der Ball des Hundes.">⚽ Das ist der Ball <span class="k-gen">des Hundes</span>.<br><small class="muted">That is the dog's ball.</small></p>
+          </div>
+        </div>
+        <div class="card case-all">
+          <h3>Alle vier Fälle in einem Satz · All four cases in one sentence</h3>
+          <p class="case-big sayable" data-say="Der Junge gibt dem Hund den Ball des Mädchens.">
+            <span class="k-nom">Der Junge</span> gibt <span class="k-dat">dem Hund</span> <span class="k-akk">den Ball</span> <span class="k-gen">des Mädchens</span>.
+          </p>
+          <p class="muted">The boy gives the dog the girl's ball. · 👦 Wer gibt? → <span class="k-nom">Nominativ</span> · 🐕 Wem? → <span class="k-dat">Dativ</span> · ⚽ Was? → <span class="k-akk">Akkusativ</span> · 👧 Wessen Ball? → <span class="k-gen">Genitiv</span></p>
+        </div>
+        <div class="card case-tip">
+          <h3>💡 Merktipps · Tips</h3>
+          <ul>
+            <li><b>Akkusativ:</b> nur <span class="c-der">der</span> ändert sich → <span class="k-akk">den</span>. die, das und Plural bleiben gleich. <small class="muted">Only the masculine changes.</small></li>
+            <li><b>Dativ:</b> alles ändert sich: <span class="k-dat">dem · der · dem · den</span> – und im Plural bekommt das Nomen ein <b>-n</b> (den Kinder<b>n</b>). <small class="muted">Everything changes; plural nouns add -n.</small></li>
+            <li><b>Genitiv:</b> <span class="k-gen">des · der · des · der</span> – maskulin und neutrum bekommen <b>-s</b> oder <b>-es</b> (des Hund<b>es</b>). <small class="muted">Masculine/neuter nouns add -s/-es.</small></li>
+            <li>Frag immer mit dem <b>Fragewort</b>: Wer? Wen? Wem? Wessen? <small class="muted">Always ask the question word.</small></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tables -->
+      <div class="case-sub" id="case-tables" hidden>
+        <div class="case-tables">
+          <div class="card"><h3>Bestimmter Artikel · definite article</h3><div class="table-wrap" id="tblDef"></div></div>
+          <div class="card"><h3>Unbestimmter Artikel · indefinite article</h3><div class="table-wrap" id="tblIndef"></div></div>
+          <div class="card"><h3>kein · no, not a</h3><div class="table-wrap" id="tblKein"></div></div>
+          <div class="card"><h3>mein · my <small class="muted">(dein, sein, ihr, unser, euer genauso · work the same)</small></h3><div class="table-wrap" id="tblMein"></div></div>
+        </div>
+        <div class="card"><h3>Mit Nomen · with nouns <small class="muted">(klicken zum Anhören · click to hear)</small></h3><div class="table-wrap" id="tblNouns"></div></div>
+        <div class="card"><h3>Personalpronomen · personal pronouns</h3><div class="table-wrap" id="tblPron"></div></div>
+        <div class="card case-tip">
+          <h3>📏 Regeln für das Nomen · noun endings</h3>
+          <ul>
+            <li><b>Dativ Plural:</b> Nomen + <b>n</b> → den Kinder<b>n</b>, den Äpfel<b>n</b> (nicht bei -n oder -s: den Katzen, den Autos).</li>
+            <li><b>Genitiv maskulin/neutrum:</b> + <b>s</b> oder + <b>es</b> → des Vater<b>s</b>, des Hund<b>es</b>, des Haus<b>es</b>.</li>
+            <li><b>n-Deklination:</b> einige maskuline Nomen bekommen in allen Fällen außer Nominativ Singular <b>-n / -en</b>: der Junge → den / dem / des Junge<b>n</b>. Auch: Löwe, Affe, Bär, Elefant, Mensch, Held, Kunde, Nachbar.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Prepositions -->
+      <div class="case-sub" id="case-preps" hidden>
+        <div class="case-grid">
+          <div class="case-card c-akk">
+            <div class="case-head"><h2>+ Akkusativ</h2></div>
+            <p class="prep-list">durch · für · gegen · ohne · um <small class="muted">(+ bis, entlang)</small></p>
+            <p class="muted">Merkwort · memory word: <b>DOGFU</b> = durch, ohne, gegen, für, um</p>
+            <p class="case-ex sayable" data-say="Das Geschenk ist für den Opa.">🎁 Das Geschenk ist <b>für</b> <span class="k-akk">den Opa</span>.</p>
+            <p class="case-ex sayable" data-say="Wir gehen durch den Park.">🌳 Wir gehen <b>durch</b> <span class="k-akk">den Park</span>.</p>
+          </div>
+          <div class="case-card c-dat">
+            <div class="case-head"><h2>+ Dativ</h2></div>
+            <p class="prep-list">aus · bei · mit · nach · seit · von · zu <small class="muted">(+ gegenüber, ab)</small></p>
+            <p class="muted">Merksatz: „aus, bei, mit, nach, seit, von, zu – fährst immer mit dem Dativ du!“</p>
+            <p class="case-ex sayable" data-say="Ich fahre mit dem Bus.">🚌 Ich fahre <b>mit</b> <span class="k-dat">dem Bus</span>.</p>
+            <p class="case-ex sayable" data-say="Ich komme aus der Schule.">🏫 Ich komme <b>aus</b> <span class="k-dat">der Schule</span>.</p>
+          </div>
+          <div class="case-card c-wechsel">
+            <div class="case-head"><h2>Wo? oder Wohin?</h2><span>two-way</span></div>
+            <p class="prep-list">an · auf · hinter · in · neben · über · unter · vor · zwischen</p>
+            <p><b>Wo?</b> (Ort · place) → <span class="k-dat">Dativ</span> · <b>Wohin?</b> (Richtung · direction) → <span class="k-akk">Akkusativ</span></p>
+            <p class="case-ex sayable" data-say="Die Katze liegt auf dem Tisch.">🐈 Die Katze liegt <b>auf</b> <span class="k-dat">dem Tisch</span>. <small class="muted">Wo?</small></p>
+            <p class="case-ex sayable" data-say="Die Katze springt auf den Tisch.">🐈 Die Katze springt <b>auf</b> <span class="k-akk">den Tisch</span>. <small class="muted">Wohin?</small></p>
+            <p class="case-ex sayable" data-say="Ich bin in der Schule. Ich gehe in die Schule.">🏫 Ich bin <b>in</b> <span class="k-dat">der Schule</span>. · Ich gehe <b>in</b> <span class="k-akk">die Schule</span>.</p>
+          </div>
+          <div class="case-card c-gen">
+            <div class="case-head"><h2>+ Genitiv</h2></div>
+            <p class="prep-list">wegen · trotz · während · statt <small class="muted">(+ innerhalb, außerhalb)</small></p>
+            <p class="muted">Beim Sprechen oft mit Dativ · in speech often with dative.</p>
+            <p class="case-ex sayable" data-say="Wegen des Regens bleiben wir zu Hause.">🌧️ <b>Wegen</b> <span class="k-gen">des Regens</span> bleiben wir zu Hause.</p>
+            <p class="case-ex sayable" data-say="Während der Pause spielen wir.">🔔 <b>Während</b> <span class="k-gen">der Pause</span> spielen wir.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🔗 Kurzformen · contractions</h3>
+          <div class="contractions">
+            <span><b>am</b> = an dem</span><span><b>im</b> = in dem</span><span><b>zum</b> = zu dem</span><span><b>zur</b> = zu der</span>
+            <span><b>vom</b> = von dem</span><span><b>beim</b> = bei dem</span><span><b>ins</b> = in das</span><span><b>ans</b> = an das</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dative verbs -->
+      <div class="case-sub" id="case-verbs" hidden>
+        <p class="muted">Diese Verben brauchen den <span class="k-dat">Dativ</span> (Wem?). Klicke auf ein Verb für die Konjugation. · These verbs take the dative. Click a verb for its conjugation.</p>
+        <div class="word-grid" id="dativeVerbs"></div>
+        <div class="card case-tip">
+          <h3>🎁 Wem + was? · Dativ + Akkusativ</h3>
+          <p>geben, schenken, zeigen, erklären, bringen: <b>wem</b> (<span class="k-dat">Dativ</span>) + <b>was</b> (<span class="k-akk">Akkusativ</span>)</p>
+          <p class="case-ex sayable" data-say="Ich schenke der Oma einen Blumenstrauß.">💐 Ich schenke <span class="k-dat">der Oma</span> <span class="k-akk">einen Blumenstrauß</span>.</p>
+          <p class="case-ex sayable" data-say="Der Lehrer erklärt dem Kind die Aufgabe.">🧑‍🏫 Der Lehrer erklärt <span class="k-dat">dem Kind</span> <span class="k-akk">die Aufgabe</span>.</p>
+        </div>
+      </div>
+
+      <!-- Practice -->
+      <div class="case-sub" id="case-practice" hidden>
+        <div class="card game-settings">
+          <label>Übung <small class="en">Exercise</small>
+            <select id="cqMode">
+              <option value="def">der, den, dem, des … einsetzen · fill in the article</option>
+              <option value="indef">ein, einen, einem … einsetzen · indefinite article</option>
+              <option value="case">Welcher Fall? · Which case?</option>
+            </select>
+          </label>
+          <div class="chip-row" id="cqCases">
+            <button class="chip active k-nom-chip" data-case="nom">Nominativ</button>
+            <button class="chip active k-akk-chip" data-case="akk">Akkusativ</button>
+            <button class="chip active k-dat-chip" data-case="dat">Dativ</button>
+            <button class="chip active k-gen-chip" data-case="gen">Genitiv</button>
+          </div>
+          <label class="check"><input type="checkbox" id="cqPlural" checked> Plural <small class="en">include plural</small></label>
+          <label class="check"><input type="checkbox" id="cqSpeak" checked> Satz vorlesen <small class="en">Read the sentence</small></label>
+        </div>
+        <div class="game-layout">
+          <div class="card game-card cq-card" id="cqCard">
+            <div class="game-cat" id="cqBadge">&nbsp;</div>
+            <div class="game-pic" id="cqPic"></div>
+            <p class="cq-sentence" id="cqSentence"></p>
+            <p class="game-hint" id="cqHint"></p>
+            <div class="game-feedback" id="cqFeedback">Wähle das richtige Wort. · Choose the right word.</div>
+            <div class="answer-buttons cq-answers" id="cqAnswers"></div>
+            <div class="cq-explain" id="cqExplain" hidden></div>
+            <div class="game-controls">
+              <button class="btn primary" id="cqNext">Weiter · Next ⏎</button>
+              <button class="btn" id="cqSay">🔊 Anhören · Listen</button>
+            </div>
+          </div>
+          <div class="scoreboard">
+            <div class="score"><span id="cqCorrect">0</span><small>richtig · correct</small></div>
+            <div class="score"><span id="cqWrong">0</span><small>falsch · wrong</small></div>
+            <div class="score"><span id="cqStreak">0</span><small>Serie · streak 🔥</small></div>
+          </div>
+        </div>
+        <p class="muted center">Tipp: Tasten <kbd>1</kbd>–<kbd>6</kbd> zum Antworten, <kbd>Enter</kbd> für weiter. · Keys 1–6 to answer, Enter for next.</p>
+      </div>
+    </section>
+
     <!-- ============ UPLOAD ============ -->
     <section id="tab-upload" class="panel">
       <div class="card">
@@ -284,24 +458,25 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="vendor/xlsx.full.min.js?v=7c84c3bc7f"></script>
-  <script src="vendor/hyph-de-1996.js?v=7c84c3bc7f"></script>
-  <script src="js/data/01-people-body-food.js?v=7c84c3bc7f"></script>
-  <script src="js/data/02-home-school-toys.js?v=7c84c3bc7f"></script>
-  <script src="js/data/03-animals-nature.js?v=7c84c3bc7f"></script>
-  <script src="js/data/04-city-traffic-travel-jobs.js?v=7c84c3bc7f"></script>
-  <script src="js/data/05-leisure-sport-art-time.js?v=7c84c3bc7f"></script>
-  <script src="js/data/06-tech-tools-money-work-language.js?v=7c84c3bc7f"></script>
-  <script src="js/data/07-feelings-society-science-fantasy.js?v=7c84c3bc7f"></script>
-  <script src="js/data/08-everyday-common.js?v=7c84c3bc7f"></script>
-  <script src="js/data/09-extended-nouns.js?v=7c84c3bc7f"></script>
-  <script src="js/data/plurals.js?v=7c84c3bc7f"></script>
-  <script src="js/data/words.js?v=7c84c3bc7f"></script>
-  <script src="js/data/examples.js?v=7c84c3bc7f"></script>
-  <script src="js/data/ranks.js?v=7c84c3bc7f"></script>
-  <script src="js/data/syllables.js?v=7c84c3bc7f"></script>
-  <script src="js/data/pictures.js?v=7c84c3bc7f"></script>
-  <script src="js/data/verbs.js?v=7c84c3bc7f"></script>
-  <script src="js/app.js?v=7c84c3bc7f"></script>
+  <script src="vendor/xlsx.full.min.js?v=3c09e68bdd"></script>
+  <script src="vendor/hyph-de-1996.js?v=3c09e68bdd"></script>
+  <script src="js/data/01-people-body-food.js?v=3c09e68bdd"></script>
+  <script src="js/data/02-home-school-toys.js?v=3c09e68bdd"></script>
+  <script src="js/data/03-animals-nature.js?v=3c09e68bdd"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=3c09e68bdd"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=3c09e68bdd"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=3c09e68bdd"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=3c09e68bdd"></script>
+  <script src="js/data/08-everyday-common.js?v=3c09e68bdd"></script>
+  <script src="js/data/09-extended-nouns.js?v=3c09e68bdd"></script>
+  <script src="js/data/plurals.js?v=3c09e68bdd"></script>
+  <script src="js/data/words.js?v=3c09e68bdd"></script>
+  <script src="js/data/examples.js?v=3c09e68bdd"></script>
+  <script src="js/data/ranks.js?v=3c09e68bdd"></script>
+  <script src="js/data/syllables.js?v=3c09e68bdd"></script>
+  <script src="js/data/pictures.js?v=3c09e68bdd"></script>
+  <script src="js/data/cases.js?v=3c09e68bdd"></script>
+  <script src="js/data/verbs.js?v=3c09e68bdd"></script>
+  <script src="js/app.js?v=3c09e68bdd"></script>
 </body>
 </html>

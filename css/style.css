@@ -272,6 +272,75 @@ img.print-pic { height: 3rem; border-radius: 8px; }
 .small-print { font-size: .8rem; text-align: center; margin-top: 24px; }
 .small-print a { color: var(--muted); }
 
+/* ---------- Cases (Fälle) ---------- */
+:root { --nom: #0f766e; --akk: #c2410c; --dat: #6d28d9; --gen: #be185d; }
+.sub-tabs { flex-wrap: wrap; margin-bottom: 18px; }
+.k-nom { color: var(--nom); font-weight: 800; border-bottom: 3px solid var(--nom); }
+.k-akk { color: var(--akk); font-weight: 800; border-bottom: 3px solid var(--akk); }
+.k-dat { color: var(--dat); font-weight: 800; border-bottom: 3px solid var(--dat); }
+.k-gen { color: var(--gen); font-weight: 800; border-bottom: 3px solid var(--gen); }
+th.k-nom, th.k-akk, th.k-dat, th.k-gen { border-bottom-width: 1px; border-bottom-color: var(--line); }
+.case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.case-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; border-top: 6px solid var(--line); }
+.case-card.c-nom { border-top-color: var(--nom); }
+.case-card.c-akk { border-top-color: var(--akk); }
+.case-card.c-dat { border-top-color: var(--dat); }
+.case-card.c-gen { border-top-color: var(--gen); }
+.case-card.c-wechsel { border-top: 6px solid; border-image: linear-gradient(90deg, var(--dat) 50%, var(--akk) 50%) 1; }
+.case-head { display: flex; align-items: baseline; gap: 10px; }
+.case-head h2 { margin: 0; font-size: 1.4rem; }
+.case-head span { color: var(--muted); font-weight: 600; }
+.c-nom .case-head h2 { color: var(--nom); } .c-akk .case-head h2 { color: var(--akk); }
+.c-dat .case-head h2 { color: var(--dat); } .c-gen .case-head h2 { color: var(--gen); }
+.case-q { font-size: 1.25rem; font-weight: 800; margin: 8px 0; }
+.case-q small { color: var(--muted); font-weight: 600; font-size: .75em; }
+.case-ex { background: var(--bg); border-radius: 10px; padding: 8px 12px; font-size: 1.05rem; cursor: pointer; }
+.case-ex:hover { background: #ede9fe; }
+.case-big { font-size: clamp(1.3rem, 3.5vw, 2rem); font-weight: 700; line-height: 1.8; cursor: pointer; }
+.case-tip ul { padding-left: 20px; line-height: 1.8; margin: 0; }
+.prep-list { font-size: 1.2rem; font-weight: 800; }
+.contractions { display: flex; flex-wrap: wrap; gap: 10px; }
+.contractions span { background: var(--bg); border-radius: 10px; padding: 6px 12px; }
+.case-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 0 20px; }
+#cqCases { flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .sub-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .sub-tabs::-webkit-scrollbar { display: none; }
+  .sub-tabs .chip { flex: 0 0 auto; }
+  .case-table td, .case-table th { padding: 5px 6px; font-size: .95rem; }
+}
+.case-table { width: 100%; }
+.case-table td { cursor: pointer; font-size: 1.05rem; }
+.case-table td:hover { background: #ede9fe; }
+.case-table td.chg { font-weight: 800; background: #fff7ed; }
+.dv-card { cursor: pointer; }
+.dv-ex { font-size: .9rem; margin-top: 4px; }
+.cq-sentence { font-size: clamp(1.5rem, 4.5vw, 2.4rem); font-weight: 700; margin: 14px 0 6px; line-height: 1.5; }
+.cq-blank { display: inline-block; min-width: 3.2ch; border-bottom: 4px dashed var(--accent); color: var(--accent); }
+.cq-np { background: #fef3c7; border-radius: 8px; padding: 0 6px; }
+.cq-answers .ans { min-width: 96px; font-size: 1.35rem; color: var(--ink); border-color: var(--line); }
+.cq-answers .ans.correct { background: var(--das); border-color: var(--das); color: #fff; }
+.k-nom-btn { color: var(--nom) !important; border-color: var(--nom) !important; }
+.k-akk-btn { color: var(--akk) !important; border-color: var(--akk) !important; }
+.k-dat-btn { color: var(--dat) !important; border-color: var(--dat) !important; }
+.k-gen-btn { color: var(--gen) !important; border-color: var(--gen) !important; }
+.cq-answers .ans.correct[class*="-btn"] { color: #fff !important; }
+.case-badge { color: #fff; border-radius: 999px; padding: 4px 14px; font-weight: 800; }
+.k-nom-bg { background: var(--nom); } .k-akk-bg { background: var(--akk); } .k-dat-bg { background: var(--dat); } .k-gen-bg { background: var(--gen); }
+.cq-card.cq-nom { background: #f0fdfa; } .cq-card.cq-akk { background: #fff7ed; }
+.cq-card.cq-dat { background: #f5f3ff; } .cq-card.cq-gen { background: #fdf2f8; }
+.cq-explain { background: rgba(255,255,255,.8); border-radius: 12px; padding: 10px 16px; margin: 0 auto 16px; max-width: 640px; text-align: left; }
+.cq-explain p { margin: 4px 0; }
+.cq-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.cq-cell { display: flex; flex-direction: column; align-items: center; min-width: 76px; padding: 6px 8px; border-radius: 10px; background: var(--bg); font-weight: 700; }
+.cq-cell small { color: var(--muted); font-weight: 600; font-size: .7rem; }
+.cq-cell.on { background: var(--ink); color: #fff; }
+.cq-cell.on small { color: #cbd5e1; }
+#cqCases .chip.active.k-nom-chip { background: var(--nom); border-color: var(--nom); }
+#cqCases .chip.active.k-akk-chip { background: var(--akk); border-color: var(--akk); }
+#cqCases .chip.active.k-dat-chip { background: var(--dat); border-color: var(--dat); }
+#cqCases .chip.active.k-gen-chip { background: var(--gen); border-color: var(--gen); }
+
 /* ---------- Upload ---------- */
 .mini-table, .data-table { border-collapse: collapse; margin: 12px 0; font-size: .95rem; }
 .mini-table th, .mini-table td, .data-table th, .data-table td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }

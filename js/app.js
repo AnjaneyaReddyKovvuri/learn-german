@@ -1144,6 +1144,229 @@
   })();
 
   /* ------------------------------------------------------------------ */
+  /* Cases (Fälle)                                                       */
+  /* ------------------------------------------------------------------ */
+
+  const cases = (() => {
+    const CASE_NAMES = { nom: "Nominativ", akk: "Akkusativ", dat: "Dativ", gen: "Genitiv" };
+    const CASE_Q = { nom: "Wer oder was?", akk: "Wen oder was?", dat: "Wem?", gen: "Wessen?" };
+    const G = { der: "m", die: "f", das: "n" };
+    const GENDER_NAMES = { m: "maskulin", f: "feminin", n: "neutrum", pl: "Plural" };
+    const ORDER = ["nom", "akk", "dat", "gen"];
+    const ART = {
+      def: { nom: { m: "der", f: "die", n: "das", pl: "die" }, akk: { m: "den", f: "die", n: "das", pl: "die" },
+             dat: { m: "dem", f: "der", n: "dem", pl: "den" }, gen: { m: "des", f: "der", n: "des", pl: "der" } },
+      indef: { nom: { m: "ein", f: "eine", n: "ein", pl: "—" }, akk: { m: "einen", f: "eine", n: "ein", pl: "—" },
+               dat: { m: "einem", f: "einer", n: "einem", pl: "—" }, gen: { m: "eines", f: "einer", n: "eines", pl: "—" } },
+      kein: { nom: { m: "kein", f: "keine", n: "kein", pl: "keine" }, akk: { m: "keinen", f: "keine", n: "kein", pl: "keine" },
+              dat: { m: "keinem", f: "keiner", n: "keinem", pl: "keinen" }, gen: { m: "keines", f: "keiner", n: "keines", pl: "keiner" } },
+      mein: { nom: { m: "mein", f: "meine", n: "mein", pl: "meine" }, akk: { m: "meinen", f: "meine", n: "mein", pl: "meine" },
+              dat: { m: "meinem", f: "meiner", n: "meinem", pl: "meinen" }, gen: { m: "meines", f: "meiner", n: "meines", pl: "meiner" } },
+    };
+    // [class, article, nom, gen, dat, akk, plural, dative plural, English]
+    const NOUNS = (window.CASE_NOUNS || []).map(([cls, art, nom, gen, dat, akk, pl, pld, en]) =>
+      ({ cls, art, g: G[art], sg: { nom, akk, dat, gen }, pl: pl ? { nom: pl, akk: pl, dat: pld || pl, gen: pl } : null, en }));
+
+    // Sentence templates. cls: which nouns fit (p person, a animal, b small thing, o big thing); only: "def"/"indef".
+    const T = [
+      { c: "nom", t: "{NP} ist hier.", tp: "{NP} sind hier.", why: "Subjekt: Wer oder was ist hier?", en: "Subject" },
+      { c: "nom", t: "Wo ist {NP}?", tp: "Wo sind {NP}?", why: "Subjekt: Wer oder was ist wo?", en: "Subject", only: "def" },
+      { c: "nom", t: "Da kommt {NP}.", tp: "Da kommen {NP}.", why: "Subjekt: Wer kommt?", en: "Subject", cls: "pa" },
+      { c: "nom", t: "Das ist {NP}.", why: "nach „sein“ steht der Nominativ: Wer oder was ist das?", en: "after “sein”", only: "indef" },
+      { c: "akk", t: "Ich sehe {NP}.", why: "sehen + Akkusativ: Wen oder was sehe ich?", en: "direct object" },
+      { c: "akk", t: "Wir malen {NP}.", why: "malen + Akkusativ: Wen oder was malen wir?", en: "direct object" },
+      { c: "akk", t: "Ich suche {NP}.", why: "suchen + Akkusativ: Wen oder was suche ich?", en: "direct object" },
+      { c: "akk", t: "Ich kaufe {NP}.", why: "kaufen + Akkusativ: Was kaufe ich?", en: "direct object", cls: "b" },
+      { c: "akk", t: "Das Geschenk ist für {NP}.", why: "für + Akkusativ", en: "“für” takes the accusative", cls: "pa" },
+      { c: "akk", t: "Ich gehe ohne {NP}.", why: "ohne + Akkusativ", en: "“ohne” takes the accusative", cls: "pa" },
+      { c: "akk", t: "Ich stelle mich neben {NP}.", why: "neben + Wohin? → Akkusativ", en: "two-way preposition, direction", cls: "pao" },
+      { c: "dat", t: "Ich stehe neben {NP}.", why: "neben + Wo? → Dativ", en: "two-way preposition, place", cls: "pao" },
+      { c: "dat", t: "Ich sitze hinter {NP}.", why: "hinter + Wo? → Dativ", en: "two-way preposition, place", cls: "pao" },
+      { c: "dat", t: "Ich helfe {NP}.", why: "helfen + Dativ: Wem helfe ich?", en: "“helfen” takes the dative", cls: "pa" },
+      { c: "dat", t: "Ich spiele mit {NP}.", why: "mit + Dativ", en: "“mit” takes the dative", cls: "pa" },
+      { c: "dat", t: "Das gehört {NP}.", why: "gehören + Dativ: Wem gehört das?", en: "“gehören” takes the dative", cls: "p" },
+      { c: "gen", t: "Das ist ein Bild {NP}.", why: "Wessen Bild? → Genitiv", en: "possession" },
+      { c: "gen", t: "Das ist die Farbe {NP}.", why: "Wessen Farbe? → Genitiv", en: "possession", cls: "aob" },
+      { c: "gen", t: "Das ist das Zimmer {NP}.", why: "Wessen Zimmer? → Genitiv", en: "possession", cls: "p" },
+    ];
+
+    const el = {
+      nav: $$("#caseNav .chip"), mode: $("#cqMode"), caseChips: $$("#cqCases .chip"), plural: $("#cqPlural"), speakOn: $("#cqSpeak"),
+      card: $("#cqCard"), badge: $("#cqBadge"), pic: $("#cqPic"), sentence: $("#cqSentence"), hint: $("#cqHint"),
+      feedback: $("#cqFeedback"), answers: $("#cqAnswers"), explain: $("#cqExplain"), next: $("#cqNext"), say: $("#cqSay"),
+      correct: $("#cqCorrect"), wrong: $("#cqWrong"), streak: $("#cqStreak"),
+    };
+    const stats = { correct: 0, wrong: 0, streak: 0 };
+    let q = null;
+
+    // ---------- sub-pages ----------
+    function showSub(name) {
+      el.nav.forEach((c) => c.classList.toggle("active", c.dataset.sub === name));
+      $$("#tab-cases .case-sub").forEach((d) => { d.hidden = d.id !== `case-${name}`; });
+      if (name === "practice" && !q) newQuestion();
+    }
+    el.nav.forEach((c) => c.addEventListener("click", () => showSub(c.dataset.sub)));
+
+    // Speak any example marked with data-say.
+    $("#tab-cases").addEventListener("click", (ev) => {
+      const s = ev.target.closest("[data-say]");
+      if (s && s.dataset.say && !s.closest("#cqAnswers")) speak(s.dataset.say, s, { sentence: s.dataset.say.includes(" ") });
+    });
+
+    // ---------- tables ----------
+    function articleTable(kind) {
+      const cols = ["m", "f", "n", "pl"];
+      return `<table class="data-table case-table"><tr><th></th>${cols.map((g) => `<th>${GENDER_NAMES[g]}</th>`).join("")}</tr>` +
+        ORDER.map((c) => `<tr class="row-${c}"><th class="k-${c}">${CASE_NAMES[c]}</th>${cols.map((g) => {
+          const v = ART[kind][c][g];
+          const changed = c !== "nom" && v !== ART[kind].nom[g] && v !== "—";
+          return `<td class="${changed ? "chg" : ""}" data-say="${esc(v === "—" ? "" : v)}">${esc(v)}</td>`;
+        }).join("")}</tr>`).join("") + `</table>`;
+    }
+    function nounTable() {
+      const pick = (w) => NOUNS.find((n) => n.sg.nom === w);
+      const cols = [pick("Hund"), pick("Katze"), pick("Pferd"), pick("Kind")].filter(Boolean);
+      const head = cols.map((n, i) => `<th>${i === 3 ? "Plural" : GENDER_NAMES[n.g]}</th>`).join("");
+      return `<table class="data-table case-table"><tr><th></th>${head}</tr>` + ORDER.map((c) => `<tr><th class="k-${c}">${CASE_NAMES[c]}</th>${cols.map((n, i) => {
+        const pl = i === 3;
+        const g = pl ? "pl" : n.g;
+        const txt = `${ART.def[c][g]} ${(pl ? n.pl : n.sg)[c]}`;
+        return `<td data-say="${esc(txt)}">${esc(ART.def[c][g])} <b>${esc((pl ? n.pl : n.sg)[c])}</b></td>`;
+      }).join("")}</tr>`).join("") + `</table>`;
+    }
+    function pronounTable() {
+      const P = { nom: ["ich", "du", "er", "sie", "es", "wir", "ihr", "sie / Sie"], akk: ["mich", "dich", "ihn", "sie", "es", "uns", "euch", "sie / Sie"],
+                  dat: ["mir", "dir", "ihm", "ihr", "ihm", "uns", "euch", "ihnen / Ihnen"] };
+      return `<table class="data-table case-table">` + ["nom", "akk", "dat"].map((c) =>
+        `<tr><th class="k-${c}">${CASE_NAMES[c]}</th>${P[c].map((w, i) => `<td class="${c !== "nom" && w !== P.nom[i] ? "chg" : ""}" data-say="${esc(w.split(" ")[0])}">${esc(w)}</td>`).join("")}</tr>`).join("") + `</table>`;
+    }
+    $("#tblDef").innerHTML = articleTable("def");
+    $("#tblIndef").innerHTML = articleTable("indef");
+    $("#tblKein").innerHTML = articleTable("kein");
+    $("#tblMein").innerHTML = articleTable("mein");
+    $("#tblNouns").innerHTML = nounTable();
+    $("#tblPron").innerHTML = pronounTable();
+
+    // ---------- dative verbs ----------
+    const DV = [
+      ["helfen", "to help", "Ich helfe dem Kind."], ["danken", "to thank", "Ich danke der Lehrerin."],
+      ["gefallen", "to please / to like", "Das Bild gefällt mir."], ["gehören", "to belong to", "Das Buch gehört dem Mädchen."],
+      ["antworten", "to answer", "Ich antworte der Oma."], ["folgen", "to follow", "Der Hund folgt dem Jungen."],
+      ["gratulieren", "to congratulate", "Wir gratulieren der Mama."], ["schmecken", "to taste (good)", "Die Suppe schmeckt dem Papa."],
+      ["passen", "to fit / to suit", "Die Jacke passt mir."], ["glauben", "to believe (someone)", "Ich glaube dir."],
+      ["vertrauen", "to trust", "Ich vertraue meinem Freund."], ["zuhören", "to listen to", "Wir hören der Lehrerin zu."],
+      ["fehlen", "to be missed", "Du fehlst mir."], ["wehtun", "to hurt", "Der Fuß tut mir weh."],
+      ["zeigen", "to show (to someone)", "Ich zeige dem Opa mein Bild."], ["schenken", "to give (as a present)", "Ich schenke der Oma Blumen."],
+    ];
+    $("#dativeVerbs").innerHTML = DV.map(([v, en, ex]) => `
+      <div class="word verb dv-card" data-verb="${esc(v)}" title="Konjugation anzeigen · Show conjugation">
+        <button class="w-say" data-say="${esc(ex)}" title="Beispiel anhören · Hear the example">🔊</button>
+        <div class="v-inf">${esc(v)}</div>
+        <div class="w-en">${esc(en)}</div>
+        <div class="dv-ex">${esc(ex)}</div>
+      </div>`).join("");
+    $("#dativeVerbs").addEventListener("click", (ev) => {
+      if (ev.target.closest(".w-say")) return; // handled by the data-say listener
+      const c = ev.target.closest(".dv-card");
+      if (c) verbs.openByInf(c.dataset.verb);
+    });
+
+    // ---------- practice ----------
+    const rand = (a) => a[Math.floor(Math.random() * a.length)];
+    const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    const activeCases = () => el.caseChips.filter((c) => c.classList.contains("active")).map((c) => c.dataset.case);
+
+    function newQuestion() {
+      const mode = el.mode.value;
+      const artKind = mode === "case" ? (Math.random() < 0.7 ? "def" : "indef") : mode;
+      const allowed = activeCases();
+      const temps = T.filter((t) => allowed.includes(t.c) && (!t.only || t.only === artKind));
+      if (!temps.length) { toast("Wähle mindestens einen Fall. · Choose at least one case."); return; }
+      const t = rand(temps);
+      const nouns = NOUNS.filter((n) => (t.cls || "paob").includes(n.cls));
+      const n = rand(nouns);
+      // Plural only with the definite article, and for subject sentences only where a plural verb form exists.
+      const canPlural = artKind === "def" && el.plural.checked && n.pl && (t.c !== "nom" || t.tp);
+      const plural = !!canPlural && Math.random() < 0.3;
+      const g = plural ? "pl" : n.g;
+      const article = ART[artKind][t.c][g];
+      const noun = (plural ? n.pl : n.sg)[t.c];
+      const template = plural && t.tp ? t.tp : t.t;
+      const start = template.startsWith("{NP}");
+      const full = template.replace("{NP}", `${start ? cap(article) : article} ${noun}`);
+      q = { t, n, g, plural, article, noun, template, start, full, artKind, mode, answered: false };
+      el.card.className = "card game-card cq-card";
+      el.badge.innerHTML = "&nbsp;";
+      el.pic.innerHTML = picHtml(pictureOf({ article: n.art, noun: n.sg.nom }), "pic");
+      el.hint.textContent = `(${plural ? "Plural · " : ""}${n.en})`;
+      el.explain.hidden = true;
+      if (mode === "case") {
+        el.sentence.innerHTML = esc(template).replace("{NP}", `<span class="cq-np">${esc(start ? cap(article) : article)} ${esc(noun)}</span>`);
+        el.feedback.textContent = "Welcher Fall ist das? · Which case is this?";
+        el.answers.innerHTML = ORDER.map((c, i) => `<button class="ans cq-ans k-${c}-btn" data-a="${c}">${CASE_NAMES[c]} <kbd>${i + 1}</kbd></button>`).join("");
+      } else {
+        el.sentence.innerHTML = esc(template).replace("{NP}", `<span class="cq-blank">___</span> ${esc(noun)}`);
+        el.feedback.textContent = "Welches Wort passt? · Which word fits?";
+        const opts = artKind === "def" ? ["der", "die", "das", "den", "dem", "des"] : ["ein", "eine", "einen", "einem", "einer", "eines"];
+        el.answers.innerHTML = opts.map((o, i) => `<button class="ans cq-ans" data-a="${o}">${o} <kbd>${i + 1}</kbd></button>`).join("");
+      }
+      el.feedback.style.color = "";
+    }
+
+    function answer(a) {
+      if (!q || q.answered) return;
+      q.answered = true;
+      const right = q.mode === "case" ? q.t.c : q.article;
+      const ok = a === right;
+      if (ok) { stats.correct++; stats.streak++; } else { stats.wrong++; stats.streak = 0; }
+      el.correct.textContent = stats.correct; el.wrong.textContent = stats.wrong; el.streak.textContent = stats.streak;
+      $$("#cqAnswers .ans").forEach((b) => {
+        b.disabled = true;
+        if (b.dataset.a === right) b.classList.add("correct", "cq-right");
+        else if (b.dataset.a === a) b.classList.add("wrong");
+      });
+      const c = q.t.c;
+      el.card.classList.add(`cq-${c}`);
+      el.badge.innerHTML = `<span class="case-badge k-${c}-bg">${CASE_NAMES[c]}</span>`;
+      el.sentence.innerHTML = esc(q.template).replace("{NP}", `<span class="k-${c}">${esc(q.start ? cap(q.article) : q.article)} ${esc(q.noun)}</span>`);
+      el.feedback.textContent = ok ? rand(["Super! · Great! 🎉", "Richtig! · Correct! ⭐", "Toll! · Well done! 👏"]) : `Leider falsch · Not quite – richtig: „${q.mode === "case" ? CASE_NAMES[right] : right}“`;
+      el.feedback.style.color = ok ? "var(--das)" : "var(--die)";
+      // Explanation: why this case, and the article row with the right cell marked.
+      const row = ["m", "f", "n", "pl"].map((g) => {
+        const v = ART[q.artKind][c][g];
+        return `<span class="${g === q.g ? "cq-cell on" : "cq-cell"}"><small>${GENDER_NAMES[g]}</small>${esc(v)}</span>`;
+      }).join("");
+      el.explain.innerHTML = `<p><b class="k-${c}">${CASE_NAMES[c]}</b> – ${esc(q.t.why)} <small class="muted">(${esc(q.t.en)})</small></p>
+        <p class="muted">Fragewort: <b>${CASE_Q[c]}</b> · ${GENDER_NAMES[q.g]}${q.plural ? "" : ` (${q.n.art} ${esc(q.n.sg.nom)})`}</p>
+        <div class="cq-row">${row}</div>`;
+      el.explain.hidden = false;
+      if (el.speakOn.checked) speak(q.full, el.sentence, { sentence: true });
+    }
+
+    el.answers.addEventListener("click", (ev) => { const b = ev.target.closest(".ans"); if (b) answer(b.dataset.a); });
+    el.next.addEventListener("click", newQuestion);
+    el.say.addEventListener("click", () => q && speak(q.answered ? q.full : q.template.replace("{NP}", "…"), el.say, { sentence: true }));
+    el.mode.addEventListener("change", newQuestion);
+    el.plural.addEventListener("change", newQuestion);
+    el.caseChips.forEach((chip) => chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+      if (!activeCases().length) chip.classList.add("active"); // keep at least one
+      newQuestion();
+    }));
+    document.addEventListener("keydown", (ev) => {
+      if (!$("#tab-cases").classList.contains("active") || $("#case-practice").hidden) return;
+      if (ev.target.matches("input, select, textarea")) return;
+      const btns = $$("#cqAnswers .ans");
+      const i = Number(ev.key) - 1;
+      if (q && !q.answered && i >= 0 && i < btns.length) { answer(btns[i].dataset.a); ev.preventDefault(); }
+      else if ((ev.key === "Enter" || ev.key === " ") && q && q.answered) { newQuestion(); ev.preventDefault(); }
+    });
+
+    return { showSub, newQuestion };
+  })();
+  window.__cases = cases;
+
+  /* ------------------------------------------------------------------ */
   /* Excel upload                                                        */
   /* ------------------------------------------------------------------ */
 
