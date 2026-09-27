@@ -137,7 +137,7 @@ def table(slide, y, widths, rows, font=13):
 s = prs.slides.add_slide(BLANK); bg(s, NAVY)
 text(s, M, 2.1, W, 3.6, [
     ("DER · DIE · DAS", 16, PEACH, True),
-    ("Artikel-Trainer", 60, CREAM, True),
+    ("Anshi German Learning App", 48, CREAM, True),
     ("Licensing check and the road to a mobile app", 24, SOFT, False),
 ])
 footer(s, "A practical summary, not legal advice · September 2026", dark=True)
@@ -200,7 +200,7 @@ header(s, "Before publishing", "Six small tasks")
 items = [("About / Credits page", "Lists every source and licence."),
          ("Privacy policy", "Short: no data is collected."),
          ("LICENSE and NOTICE files", "Your licence plus third-party notices."),
-         ("Check the app name", '"Artikel-Trainer" is generic; search the stores first.'),
+         ("Check the app name", 'Search the stores for "Anshi German Learning App" first.'),
          ("Skim the examples", 'Top 5000, or add a "report this sentence" button.'),
          ("Bundle the fonts", "So cursive works offline.")]
 cw = (W - 2 * 0.2) / 3
@@ -289,7 +289,7 @@ text(s, M, 1.7, 5.4, 4.5, [("NEXT STEPS", 14, PEACH, True), ("Three decisions, t
 for i, (t, b) in enumerate([
         ("Publisher name", "Shown in the stores and on the Credits page."),
         ("Licence for your own code", 'Open source (e.g. MIT) or "all rights reserved".'),
-        ("App name", 'Keep "Artikel-Trainer" or pick a distinctive one.')]):
+        ("App name", 'Decided: "Anshi German Learning App".')]):
     y = 1.3 + i * 1.7
     box(s, 6.9, y, 5.55, 1.5, NAVY2)
     text(s, 7.2, y + 0.25, 5.0, 1.1, [(t, 18, CREAM, True), (b, 14, SOFT, False)])

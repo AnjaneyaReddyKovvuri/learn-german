@@ -1,4 +1,4 @@
-# Artikel-Trainer (der / die / das)
+# Anshi German Learning App (der / die / das)
 
 A browser tool for school kids to practise German noun articles. No install and no server needed. Every label has its English meaning next to the German. The dictionary has **15,400+ words**: 7,900 nouns (with plurals), 2,100 verbs (with full conjugation) and 5,400 adjectives, adverbs and small words, plus 17,000 example sentences.
 

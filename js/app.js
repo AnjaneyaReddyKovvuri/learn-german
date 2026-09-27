@@ -1,4 +1,4 @@
-/* Artikel-Trainer – der / die / das practice tool */
+/* Anshi German Learning App – der / die / das practice tool */
 (() => {
   "use strict";
 

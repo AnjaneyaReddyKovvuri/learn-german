@@ -1,4 +1,4 @@
-# Put the Artikel-Trainer on your Android phone and tablet
+# Put the Anshi German Learning App on your Android phone and tablet
 
 The app is an installable web app (PWA). You put the folder online once (free), then install it from Chrome on each device.
 Once installed it has its own icon, opens full screen and **works offline**.
