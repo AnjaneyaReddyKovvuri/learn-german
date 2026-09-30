@@ -58,7 +58,7 @@
     const entries = [];
     const categories = [];
     for (const block of window.NOUN_DATA || []) {
-      categories.push({ name: block.category, icon: block.icon, extended: !!block.extended });
+      categories.push({ name: block.category, icon: block.icon, extended: !!block.extended, pinned: !!block.pinned });
       const seenInCat = new Set();
       for (const raw of block.words.split("\n")) {
         const m = raw.trim().match(LINE_RE);
@@ -84,7 +84,8 @@
 
   function rebuild() {
     allEntries = base.entries.concat(custom.map((c) => ({ ...c, custom: true })));
-    categories = base.categories.slice();
+    // Pinned categories (Grundschule) first, the rest in their original order.
+    categories = base.categories.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
     const known = new Set(categories.map((c) => c.name));
     for (const c of custom) {
       if (!known.has(c.category)) { categories.push({ name: c.category, icon: CUSTOM_ICON }); known.add(c.category); }
@@ -381,10 +382,12 @@
     el.hint.checked = settings.showEnglish !== false; // on by default
     el.auto.checked = settings.auto !== false;
     el.pics.checked = settings.pics !== false;
+    // Default category: the pinned one (Grundschule), unless the child picked another one before.
+    let wantedCategory = settings.category ?? ((window.NOUN_DATA || []).find((b) => b.pinned) || {}).category ?? "";
     el.autoSpeak.checked = settings.autoSpeak !== false;
 
     function saveSettings() {
-      store.set(SETTINGS_KEY, { seconds: el.seconds.value, showEnglish: el.hint.checked, auto: el.auto.checked, pics: el.pics.checked, autoSpeak: el.autoSpeak.checked });
+      store.set(SETTINGS_KEY, { category: el.category.value, seconds: el.seconds.value, showEnglish: el.hint.checked, auto: el.auto.checked, pics: el.pics.checked, autoSpeak: el.autoSpeak.checked });
     }
     [el.seconds, el.hint, el.auto, el.pics, el.autoSpeak].forEach((x) => x.addEventListener("change", () => {
       saveSettings();
@@ -403,7 +406,9 @@
           const n = allEntries.filter((e) => e.category === c.name).length;
           return `<option value="${esc(c.name)}">${c.icon} ${esc(c.name)} (${n})</option>`;
         }).join("");
-      if (prev && categories.some((c) => c.name === prev)) el.category.value = prev;
+      const want = prev || wantedCategory;
+      if (want && categories.some((c) => c.name === want)) el.category.value = want;
+      wantedCategory = "";
     }
 
     function updateScore() {
@@ -601,7 +606,7 @@
       speak(answered ? `${current.article} ${current.noun}` : current.noun, ev.currentTarget, { syllables: true });
     });
     el.word.addEventListener("click", sayCurrent);
-    el.category.addEventListener("change", () => { if (running) next(); });
+    el.category.addEventListener("change", () => { saveSettings(); if (running) next(); });
     el.mistakesOnly.addEventListener("change", () => { if (running) next(); });
 
     document.addEventListener("keydown", (ev) => {
