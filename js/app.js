@@ -26,6 +26,8 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const keyOf = (e) => `${e.article} ${e.noun}`;
   const collator = new Intl.Collator("de");
+  // Keyboard shortcuts are ignored while typing in these (checkboxes don't block them).
+  const TEXT_INPUT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea';
   // Show the share of correct answers ("85 %"), coloured green / orange / red.
   function showPct(node, correct, wrong) {
     const total = correct + wrong;
@@ -337,6 +339,171 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Progress (saved per day on this device) and reports                 */
+  /* ------------------------------------------------------------------ */
+
+  const progress = (() => {
+    const KEY = "artikel.progress";      // { "2026-10-04": { game: {n, c}, cases: {n, c}, ms, mistakes: {label: count} } }
+    const PROFILE_KEY = "artikel.reportProfile";
+    const KEEP_DAYS = 90;
+    const MAX_GAP = 60 * 1000;           // gaps longer than a minute don't count as practice time
+    let data = store.get(KEY, {});
+    let lastActivity = 0;
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const daysBack = (n) => { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - n); return d; };
+    const fmtDate = (key, opts = { weekday: "short", day: "numeric", month: "short" }) =>
+      new Date(key + "T12:00:00").toLocaleDateString("de-DE", opts);
+    const pctOf = (c, n) => (n ? Math.round((c / n) * 100) : null);
+
+    function prune() {
+      const oldest = dayKey(daysBack(KEEP_DAYS));
+      for (const k of Object.keys(data)) if (k < oldest) delete data[k];
+    }
+
+    // Called for every answer in the article game ("game") and the cases practice ("cases").
+    function record(kind, ok, mistake) {
+      const k = dayKey();
+      const d = data[k] || (data[k] = { game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, ms: 0, mistakes: {} });
+      d[kind].n++;
+      if (ok) d[kind].c++;
+      else if (mistake) d.mistakes[mistake] = (d.mistakes[mistake] || 0) + 1;
+      const now = Date.now();
+      if (lastActivity) d.ms += Math.min(now - lastActivity, MAX_GAP);
+      lastActivity = now;
+      prune();
+      store.set(KEY, data);
+    }
+    // The first answer after a pause counts from when the question was shown.
+    const touch = () => { if (!lastActivity || Date.now() - lastActivity > MAX_GAP) lastActivity = Date.now(); };
+
+    function summarize(days) {
+      const keys = Array.from({ length: days }, (_, i) => dayKey(daysBack(i)));
+      const s = { days: 0, n: 0, c: 0, ms: 0, game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, mistakes: {}, perDay: [] };
+      for (const k of keys) {
+        const d = data[k];
+        const n = d ? d.game.n + d.cases.n : 0;
+        s.perDay.push({ k, d, n });
+        if (!d || !n) continue;
+        s.days++;
+        s.n += n; s.c += d.game.c + d.cases.c; s.ms += d.ms;
+        s.game.n += d.game.n; s.game.c += d.game.c; s.cases.n += d.cases.n; s.cases.c += d.cases.c;
+        for (const [m, cnt] of Object.entries(d.mistakes)) s.mistakes[m] = (s.mistakes[m] || 0) + cnt;
+      }
+      s.top = Object.entries(s.mistakes).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      return s;
+    }
+
+    function streakDays() {
+      let n = 0;
+      for (let i = data[dayKey()] ? 0 : 1; ; i++) {
+        const d = data[dayKey(daysBack(i))];
+        if (d && d.game.n + d.cases.n > 0) n++; else break;
+      }
+      return n;
+    }
+
+    const minutes = (ms) => Math.max(ms ? 1 : 0, Math.round(ms / 60000));
+
+    // ---------- UI ----------
+    const el = {
+      summary: $("#progSummary"), days: $("#progDays"), mistakes: $("#progMistakes"), report: $("#progReport"),
+      range: $("#progRange"), name: $("#progName"), email: $("#progEmail"),
+    };
+    const profile = store.get(PROFILE_KEY, { name: "Anshi", email: "" });
+    el.name.value = profile.name || "";
+    el.email.value = profile.email || "";
+    const saveProfile = () => store.set(PROFILE_KEY, { name: el.name.value.trim(), email: el.email.value.trim() });
+
+    function reportText() {
+      const days = Number(el.range.value);
+      const s = summarize(days);
+      const name = el.name.value.trim() || "Mein Kind";
+      const period = days === 1 ? fmtDate(dayKey(), { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        : `${fmtDate(dayKey(daysBack(days - 1)), { day: "numeric", month: "long" })} – ${fmtDate(dayKey(), { day: "numeric", month: "long", year: "numeric" })}`;
+      const subject = `${name} – Deutsch-Bericht · German report – ${period}`;
+      const L = [`${name} – Deutsch-Bericht für ${period}`, ""];
+      if (!s.n) {
+        L.push(days === 1 ? "Heute noch nicht geübt. · No practice yet today." : "In diesem Zeitraum nicht geübt. · No practice in this period.");
+      } else {
+        if (days > 1) L.push(`Übungstage · days practised: ${s.days} von ${days}`);
+        const m = minutes(s.ms);
+        L.push(`Geübt · practised: ${s.n} Wörter/Sätze in ${m} ${m === 1 ? "Minute" : "Minuten"}`);
+        L.push(`Richtig · correct: ${s.c} von ${s.n} (${pctOf(s.c, s.n)} %)`);
+        if (s.game.n) L.push(`  • Artikel-Spiel · article game: ${s.game.n} Wörter, ${pctOf(s.game.c, s.game.n)} % richtig`);
+        if (s.cases.n) L.push(`  • Fälle · cases: ${s.cases.n} Sätze, ${pctOf(s.cases.c, s.cases.n)} % richtig`);
+        if (s.top.length) L.push("", "Häufigste Fehler · most frequent mistakes:", ...s.top.slice(0, 6).map(([m, c]) => `  • ${m}${c > 1 ? ` (${c}×)` : ""}`));
+        if (days > 1) {
+          L.push("", "Pro Tag · per day:");
+          for (const p of s.perDay.slice().reverse()) if (p.n) {
+            const c = p.d.game.c + p.d.cases.c;
+            L.push(`  ${fmtDate(p.k)}: ${p.n} geübt, ${pctOf(c, p.n)} %, ${minutes(p.d.ms)} Min.`);
+          }
+        }
+      }
+      const st = streakDays();
+      if (st > 1) L.push("", `🔥 ${st} Tage in Folge geübt · ${st} days in a row`);
+      L.push("", "— Anshi German Learning App");
+      return { subject, body: L.join("\n") };
+    }
+
+    function render() {
+      const today = summarize(1), week = summarize(7);
+      const card = (big, label, cls = "") => `<div class="score"><span class="${cls}">${big}</span><small>${label}</small></div>`;
+      const tp = pctOf(today.c, today.n);
+      const wp = pctOf(week.c, week.n);
+      const cls = (p) => (p == null ? "pct" : p >= 80 ? "pct good" : p >= 50 ? "pct ok" : "pct low");
+      el.summary.innerHTML = `<div class="scoreboard prog-cards">
+        ${card(today.n, "heute geübt · practised today")}
+        ${card(tp == null ? "–" : tp + " %", "heute richtig · correct today", cls(tp))}
+        ${card(minutes(today.ms) + " min", "heute · today")}
+        ${card(week.n, "letzte 7 Tage · last 7 days")}
+        ${card(wp == null ? "–" : wp + " %", "7 Tage richtig · correct", cls(wp))}
+        ${card("🔥 " + streakDays(), "Tage in Folge · days in a row")}
+      </div>`;
+      el.days.innerHTML = `<tr><th>Tag · day</th><th>Geübt · practised</th><th>Richtig · correct</th><th>Spiel · game</th><th>Fälle · cases</th><th>Minuten</th></tr>` +
+        summarize(14).perDay.map(({ k, d, n }) => {
+          if (!n) return `<tr class="muted"><td>${esc(fmtDate(k))}</td><td colspan="5">–</td></tr>`;
+          const c = d.game.c + d.cases.c, p = pctOf(c, n);
+          const part = (x) => (x.n ? `${x.n} · ${pctOf(x.c, x.n)} %` : "–");
+          return `<tr><td>${esc(fmtDate(k))}</td><td>${n}</td><td class="${cls(p)}">${p} %</td><td>${part(d.game)}</td><td>${part(d.cases)}</td><td>${minutes(d.ms)}</td></tr>`;
+        }).join("");
+      el.mistakes.innerHTML = week.top.length
+        ? `<div class="contractions">${week.top.map(([m, c]) => `<span data-say="${esc(m.replace(/ \(.*\)$/, ""))}" class="sayable">${esc(m)} <b>${c}×</b></span>`).join("")}</div>`
+        : `<p class="muted">Noch keine Fehler in den letzten 7 Tagen. · No mistakes in the last 7 days. 🎉</p>`;
+      el.report.textContent = reportText().body;
+    }
+
+    el.range.addEventListener("change", render);
+    [el.name, el.email].forEach((x) => x.addEventListener("input", () => { saveProfile(); el.report.textContent = reportText().body; }));
+    el.mistakes.addEventListener("click", (ev) => { const s = ev.target.closest("[data-say]"); if (s) speak(s.dataset.say, s); });
+    $("#progShare").addEventListener("click", async () => {
+      const { subject, body } = reportText();
+      if (navigator.share) {
+        try { await navigator.share({ title: subject, text: body }); } catch { /* cancelled */ }
+      } else {
+        $("#progMail").click();
+      }
+    });
+    $("#progMail").addEventListener("click", () => {
+      const { subject, body } = reportText();
+      const to = encodeURIComponent(el.email.value.trim());
+      location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+    $("#progCopy").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(reportText().body); toast("Bericht kopiert · Report copied 📋"); }
+      catch { toast("Kopieren nicht möglich · Copy not available"); }
+    });
+    $("#progReset").addEventListener("click", () => {
+      if (!confirm("Wirklich den gesamten Fortschritt auf diesem Gerät löschen? · Really delete all progress on this device?")) return;
+      data = {}; store.set(KEY, data); render();
+    });
+
+    return { record, touch, render };
+  })();
+
+  /* ------------------------------------------------------------------ */
   /* Tabs                                                                */
   /* ------------------------------------------------------------------ */
 
@@ -345,6 +512,7 @@
     $$(".panel").forEach((p) => p.classList.toggle("active", p.id === `tab-${name}`));
     if (name !== "game") game.pause();
     if (name === "cursive") renderCursive();
+    if (name === "progress") progress.render();
   }
   $$(".tab").forEach((t) => t.addEventListener("click", () => showTab(t.dataset.tab)));
 
@@ -474,6 +642,7 @@
 
     function next() {
       clearTimers();
+      progress.touch();
       if (paused) clearPauseState();
       const words = pool();
       if (!words.length) { toast("Keine Wörter in dieser Kategorie. · No words in this category."); return; }
@@ -516,6 +685,7 @@
         mistakes[k] = (mistakes[k] || 0) + 1;
       }
       store.set(MISTAKES_KEY, mistakes);
+      progress.record("game", ok, ok ? null : `${art} ${current.noun}`);
       updateScore();
 
       el.article.textContent = art;
@@ -611,7 +781,7 @@
 
     document.addEventListener("keydown", (ev) => {
       if (!$("#tab-game").classList.contains("active")) return;
-      if (ev.target.matches("input, select, textarea")) return;
+      if (ev.target.matches(TEXT_INPUT)) return;
       if (ev.key === "p" || ev.key === "P") { if (running) { togglePause(); ev.preventDefault(); } return; }
       if (paused) { if (ev.key === "Enter" || ev.key === " ") { resume(); ev.preventDefault(); } return; }
       if (["1", "2", "3"].includes(ev.key) && !answered) { finish(ARTICLES[Number(ev.key) - 1]); ev.preventDefault(); }
@@ -1288,6 +1458,7 @@
     const activeCases = () => el.caseChips.filter((c) => c.classList.contains("active")).map((c) => c.dataset.case);
 
     function newQuestion() {
+      progress.touch();
       const mode = el.mode.value;
       const artKind = mode === "case" ? (Math.random() < 0.7 ? "def" : "indef") : mode;
       const allowed = activeCases();
@@ -1330,6 +1501,7 @@
       const right = q.mode === "case" ? q.t.c : q.article;
       const ok = a === right;
       if (ok) { stats.correct++; stats.streak++; } else { stats.wrong++; stats.streak = 0; }
+      progress.record("cases", ok, ok ? null : `${q.article} ${q.noun} (${CASE_NAMES[q.t.c]})`);
       el.correct.textContent = stats.correct; el.wrong.textContent = stats.wrong; el.streak.textContent = stats.streak;
       showPct($("#cqPct"), stats.correct, stats.wrong);
       $$("#cqAnswers .ans").forEach((b) => {
@@ -1367,7 +1539,7 @@
     }));
     document.addEventListener("keydown", (ev) => {
       if (!$("#tab-cases").classList.contains("active") || $("#case-practice").hidden) return;
-      if (ev.target.matches("input, select, textarea")) return;
+      if (ev.target.matches(TEXT_INPUT)) return;
       const btns = $$("#cqAnswers .ans");
       const i = Number(ev.key) - 1;
       if (q && !q.answered && i >= 0 && i < btns.length) { answer(btns[i].dataset.a); ev.preventDefault(); }

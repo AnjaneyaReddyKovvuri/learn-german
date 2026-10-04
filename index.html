@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anshi German">
-  <link rel="stylesheet" href="css/fonts.css?v=20d8b70ae8">
-  <link rel="stylesheet" href="css/style.css?v=20d8b70ae8">
+  <link rel="stylesheet" href="css/fonts.css?v=d5ad43adef">
+  <link rel="stylesheet" href="css/style.css?v=d5ad43adef">
 </head>
 <body>
   <header class="topbar">
@@ -41,6 +41,7 @@
       <button class="tab" data-tab="verbs" role="tab">🔤 Verben <small>Verbs</small></button>
       <button class="tab" data-tab="cases" role="tab">🧩 Fälle <small>Cases</small></button>
       <button class="tab" data-tab="upload" role="tab">📤 Hinzufügen <small>Add words</small></button>
+      <button class="tab" data-tab="progress" role="tab">📈 Fortschritt <small>Progress</small></button>
       <button class="tab" data-tab="cursive" role="tab">✍️ Schreibschrift <small>Cursive</small></button>
     </nav>
   </header>
@@ -383,6 +384,45 @@
       </div>
     </section>
 
+    <!-- ============ PROGRESS ============ -->
+    <section id="tab-progress" class="panel">
+      <div class="prog-summary" id="progSummary"></div>
+
+      <div class="card">
+        <h2>📤 Bericht senden <small class="en">Send a report</small></h2>
+        <div class="game-settings">
+          <label>Zeitraum <small class="en">Period</small>
+            <select id="progRange">
+              <option value="1">Heute · today</option>
+              <option value="7">Letzte 7 Tage · last 7 days</option>
+              <option value="30">Letzte 30 Tage · last 30 days</option>
+            </select>
+          </label>
+          <label>Name <input type="text" id="progName" placeholder="Anshi" autocomplete="off"></label>
+          <label>E-Mail <small class="en">for the report</small> <input type="email" id="progEmail" placeholder="eltern@example.com" autocomplete="email"></label>
+        </div>
+        <pre class="prog-report" id="progReport"></pre>
+        <div class="btn-row">
+          <button class="btn primary" id="progShare">📤 Teilen · Share</button>
+          <button class="btn" id="progMail">✉️ E-Mail</button>
+          <button class="btn" id="progCopy">📋 Kopieren · Copy</button>
+        </div>
+        <p class="muted">Alles bleibt auf diesem Gerät, bis du den Bericht selbst sendest. · Everything stays on this device until you send the report yourself.</p>
+      </div>
+
+      <div class="card">
+        <h2>📅 Letzte 14 Tage <small class="en">Last 14 days</small></h2>
+        <div class="table-wrap"><table class="data-table prog-table" id="progDays"></table></div>
+      </div>
+
+      <div class="card">
+        <h2>🔁 Häufigste Fehler <small class="en">Most frequent mistakes (last 7 days)</small></h2>
+        <div id="progMistakes"></div>
+      </div>
+
+      <p class="center"><button class="btn danger" id="progReset">🗑 Fortschritt löschen · Delete progress</button></p>
+    </section>
+
     <!-- ============ UPLOAD ============ -->
     <section id="tab-upload" class="panel">
       <div class="card">
@@ -487,26 +527,26 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="vendor/xlsx.full.min.js?v=20d8b70ae8"></script>
-  <script src="vendor/hyph-de-1996.js?v=20d8b70ae8"></script>
-  <script src="js/data/01-people-body-food.js?v=20d8b70ae8"></script>
-  <script src="js/data/02-home-school-toys.js?v=20d8b70ae8"></script>
-  <script src="js/data/03-animals-nature.js?v=20d8b70ae8"></script>
-  <script src="js/data/04-city-traffic-travel-jobs.js?v=20d8b70ae8"></script>
-  <script src="js/data/05-leisure-sport-art-time.js?v=20d8b70ae8"></script>
-  <script src="js/data/06-tech-tools-money-work-language.js?v=20d8b70ae8"></script>
-  <script src="js/data/07-feelings-society-science-fantasy.js?v=20d8b70ae8"></script>
-  <script src="js/data/08-everyday-common.js?v=20d8b70ae8"></script>
-  <script src="js/data/09-extended-nouns.js?v=20d8b70ae8"></script>
-  <script src="js/data/10-grundschule.js?v=20d8b70ae8"></script>
-  <script src="js/data/plurals.js?v=20d8b70ae8"></script>
-  <script src="js/data/words.js?v=20d8b70ae8"></script>
-  <script src="js/data/examples.js?v=20d8b70ae8"></script>
-  <script src="js/data/ranks.js?v=20d8b70ae8"></script>
-  <script src="js/data/syllables.js?v=20d8b70ae8"></script>
-  <script src="js/data/pictures.js?v=20d8b70ae8"></script>
-  <script src="js/data/cases.js?v=20d8b70ae8"></script>
-  <script src="js/data/verbs.js?v=20d8b70ae8"></script>
-  <script src="js/app.js?v=20d8b70ae8"></script>
+  <script src="vendor/xlsx.full.min.js?v=d5ad43adef"></script>
+  <script src="vendor/hyph-de-1996.js?v=d5ad43adef"></script>
+  <script src="js/data/01-people-body-food.js?v=d5ad43adef"></script>
+  <script src="js/data/02-home-school-toys.js?v=d5ad43adef"></script>
+  <script src="js/data/03-animals-nature.js?v=d5ad43adef"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=d5ad43adef"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=d5ad43adef"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=d5ad43adef"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=d5ad43adef"></script>
+  <script src="js/data/08-everyday-common.js?v=d5ad43adef"></script>
+  <script src="js/data/09-extended-nouns.js?v=d5ad43adef"></script>
+  <script src="js/data/10-grundschule.js?v=d5ad43adef"></script>
+  <script src="js/data/plurals.js?v=d5ad43adef"></script>
+  <script src="js/data/words.js?v=d5ad43adef"></script>
+  <script src="js/data/examples.js?v=d5ad43adef"></script>
+  <script src="js/data/ranks.js?v=d5ad43adef"></script>
+  <script src="js/data/syllables.js?v=d5ad43adef"></script>
+  <script src="js/data/pictures.js?v=d5ad43adef"></script>
+  <script src="js/data/cases.js?v=d5ad43adef"></script>
+  <script src="js/data/verbs.js?v=d5ad43adef"></script>
+  <script src="js/app.js?v=d5ad43adef"></script>
 </body>
 </html>

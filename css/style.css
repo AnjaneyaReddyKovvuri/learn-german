@@ -93,7 +93,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
 
 label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 600; max-width: 100%; }
 select { max-width: 100%; }
-select, input[type=text], input[type=search] {
+select, input[type=text], input[type=search], input[type=email] {
   border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: #fff;
 }
 label.check { font-weight: 600; cursor: pointer; }
@@ -351,6 +351,12 @@ th.k-nom, th.k-akk, th.k-dat, th.k-gen { border-bottom-width: 1px; border-bottom
 #cqCases .chip.active.k-akk-chip { background: var(--akk); border-color: var(--akk); }
 #cqCases .chip.active.k-dat-chip { background: var(--dat); border-color: var(--dat); }
 #cqCases .chip.active.k-gen-chip { background: var(--gen); border-color: var(--gen); }
+
+/* ---------- Progress ---------- */
+.prog-cards { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.prog-report { background: var(--bg); border-radius: 12px; padding: 14px 16px; white-space: pre-wrap; font-family: inherit; font-size: .95rem; line-height: 1.5; margin: 12px 0; max-height: 360px; overflow: auto; }
+.prog-table td, .prog-table th { white-space: nowrap; }
+#progName, #progEmail { min-width: 0; width: 14rem; max-width: 100%; }
 
 /* ---------- Upload ---------- */
 .mini-table, .data-table { border-collapse: collapse; margin: 12px 0; font-size: .95rem; }
