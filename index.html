@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Anshi German">
-  <link rel="stylesheet" href="css/fonts.css?v=d5ad43adef">
-  <link rel="stylesheet" href="css/style.css?v=d5ad43adef">
+  <link rel="stylesheet" href="css/fonts.css?v=3ed15d88b7">
+  <link rel="stylesheet" href="css/style.css?v=3ed15d88b7">
 </head>
 <body>
   <header class="topbar">
@@ -411,6 +411,25 @@
       </div>
 
       <div class="card">
+        <h2>⏰ Automatische E-Mail um 20 Uhr <small class="en">Automatic daily email</small></h2>
+        <p>Mit einem kleinen Skript in <b>Ihrem eigenen Google-Konto</b> kommt der Bericht jeden Abend von selbst per E-Mail.
+          <small class="muted">With a small script in your own Google account the report arrives by email every evening, automatically.</small></p>
+        <p>Einrichtung (einmal, ca. 10 Min.) · setup (once, about 10 min):
+          <a href="https://github.com/AnjaneyaReddyKovvuri/learn-german/blob/main/docs/AUTO-EMAIL.md" target="_blank" rel="noopener">Anleitung · step-by-step guide</a>
+          · <button class="linklike" id="autoCopyScript">📋 Skript kopieren · copy script</button></p>
+        <div class="game-settings">
+          <label>Web-App-Adresse <small class="en">Web app URL</small>
+            <input type="url" id="autoUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
+          <label>Schlüssel <small class="en">Key</small> <input type="text" id="autoKey" autocomplete="off" spellcheck="false"></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" id="autoSave">💾 Speichern & Test senden · Save & send test</button>
+          <button class="btn" id="autoOff">Ausschalten · Turn off</button>
+        </div>
+        <p class="muted" id="autoStatus"></p>
+      </div>
+
+      <div class="card">
         <h2>📅 Letzte 14 Tage <small class="en">Last 14 days</small></h2>
         <div class="table-wrap"><table class="data-table prog-table" id="progDays"></table></div>
       </div>
@@ -527,26 +546,26 @@
 
   <div class="toast" id="toast" hidden></div>
 
-  <script src="vendor/xlsx.full.min.js?v=d5ad43adef"></script>
-  <script src="vendor/hyph-de-1996.js?v=d5ad43adef"></script>
-  <script src="js/data/01-people-body-food.js?v=d5ad43adef"></script>
-  <script src="js/data/02-home-school-toys.js?v=d5ad43adef"></script>
-  <script src="js/data/03-animals-nature.js?v=d5ad43adef"></script>
-  <script src="js/data/04-city-traffic-travel-jobs.js?v=d5ad43adef"></script>
-  <script src="js/data/05-leisure-sport-art-time.js?v=d5ad43adef"></script>
-  <script src="js/data/06-tech-tools-money-work-language.js?v=d5ad43adef"></script>
-  <script src="js/data/07-feelings-society-science-fantasy.js?v=d5ad43adef"></script>
-  <script src="js/data/08-everyday-common.js?v=d5ad43adef"></script>
-  <script src="js/data/09-extended-nouns.js?v=d5ad43adef"></script>
-  <script src="js/data/10-grundschule.js?v=d5ad43adef"></script>
-  <script src="js/data/plurals.js?v=d5ad43adef"></script>
-  <script src="js/data/words.js?v=d5ad43adef"></script>
-  <script src="js/data/examples.js?v=d5ad43adef"></script>
-  <script src="js/data/ranks.js?v=d5ad43adef"></script>
-  <script src="js/data/syllables.js?v=d5ad43adef"></script>
-  <script src="js/data/pictures.js?v=d5ad43adef"></script>
-  <script src="js/data/cases.js?v=d5ad43adef"></script>
-  <script src="js/data/verbs.js?v=d5ad43adef"></script>
-  <script src="js/app.js?v=d5ad43adef"></script>
+  <script src="vendor/xlsx.full.min.js?v=3ed15d88b7"></script>
+  <script src="vendor/hyph-de-1996.js?v=3ed15d88b7"></script>
+  <script src="js/data/01-people-body-food.js?v=3ed15d88b7"></script>
+  <script src="js/data/02-home-school-toys.js?v=3ed15d88b7"></script>
+  <script src="js/data/03-animals-nature.js?v=3ed15d88b7"></script>
+  <script src="js/data/04-city-traffic-travel-jobs.js?v=3ed15d88b7"></script>
+  <script src="js/data/05-leisure-sport-art-time.js?v=3ed15d88b7"></script>
+  <script src="js/data/06-tech-tools-money-work-language.js?v=3ed15d88b7"></script>
+  <script src="js/data/07-feelings-society-science-fantasy.js?v=3ed15d88b7"></script>
+  <script src="js/data/08-everyday-common.js?v=3ed15d88b7"></script>
+  <script src="js/data/09-extended-nouns.js?v=3ed15d88b7"></script>
+  <script src="js/data/10-grundschule.js?v=3ed15d88b7"></script>
+  <script src="js/data/plurals.js?v=3ed15d88b7"></script>
+  <script src="js/data/words.js?v=3ed15d88b7"></script>
+  <script src="js/data/examples.js?v=3ed15d88b7"></script>
+  <script src="js/data/ranks.js?v=3ed15d88b7"></script>
+  <script src="js/data/syllables.js?v=3ed15d88b7"></script>
+  <script src="js/data/pictures.js?v=3ed15d88b7"></script>
+  <script src="js/data/cases.js?v=3ed15d88b7"></script>
+  <script src="js/data/verbs.js?v=3ed15d88b7"></script>
+  <script src="js/app.js?v=3ed15d88b7"></script>
 </body>
 </html>

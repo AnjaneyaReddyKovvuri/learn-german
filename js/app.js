@@ -374,6 +374,7 @@
       lastActivity = now;
       prune();
       store.set(KEY, data);
+      autoSync.schedule();
     }
     // The first answer after a pause counts from when the question was shown.
     const touch = () => { if (!lastActivity || Date.now() - lastActivity > MAX_GAP) lastActivity = Date.now(); };
@@ -448,6 +449,98 @@
       return { subject, body: L.join("\n") };
     }
 
+
+    // ---------- automatic daily email (Google Apps Script in the parent's account) ----------
+    const autoSync = (() => {
+      const AKEY = "artikel.autoReport"; // { url, key, synced: {date: signature}, last }
+      let cfg = store.get(AKEY, { url: "", key: "", synced: {}, last: 0 });
+      let timer = null;
+      const valid = (u) => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u);
+      const save = () => store.set(AKEY, cfg);
+      const sig = (d) => JSON.stringify(d);
+
+      function dirtyDays() {
+        const out = [];
+        for (let i = 0; i < 14; i++) {
+          const k = dayKey(daysBack(i)), d = data[k];
+          if (d && sig(d) !== cfg.synced[k]) out.push({ date: k, game: d.game, cases: d.cases, ms: d.ms, mistakes: d.mistakes });
+        }
+        return out;
+      }
+      function payload(days, test) {
+        return JSON.stringify({ secret: cfg.key, name: (el.name.value || "").trim(), days, test: !!test });
+      }
+      function markSynced(days) {
+        for (const d of days) cfg.synced[d.date] = sig(data[d.date]);
+        cfg.last = Date.now();
+        save();
+        status();
+      }
+      // Fire-and-forget: Apps Script doesn't allow reading the reply from another site, so we can't confirm it.
+      async function send(test = false) {
+        if (!cfg.url || !cfg.key) return false;
+        const days = dirtyDays();
+        if (!days.length && !test) return true;
+        if (!navigator.onLine) { status("offline"); return false; }
+        try {
+          await fetch(cfg.url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload(days, test) });
+          markSynced(days);
+          return true;
+        } catch (err) {
+          status("offline");
+          return false;
+        }
+      }
+      // When the app is closed or put away, a beacon still gets the data out.
+      function flushOnHide() {
+        if (!cfg.url || !cfg.key || !navigator.sendBeacon) return;
+        const days = dirtyDays();
+        if (days.length && navigator.sendBeacon(cfg.url, new Blob([payload(days, false)], { type: "text/plain" }))) markSynced(days);
+      }
+      function status(state) {
+        const node = $("#autoStatus");
+        if (!node) return;
+        if (!cfg.url) { node.textContent = "Nicht eingerichtet. · Not set up."; return; }
+        const last = cfg.last ? new Date(cfg.last).toLocaleString("de-DE", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "–";
+        node.textContent = (state === "offline" ? "📴 Offline – wird später gesendet. · Offline – will be sent later. " : "✅ Eingeschaltet · On. ") +
+          `Zuletzt übertragen · last sent: ${last}`;
+      }
+      const schedule = () => { clearTimeout(timer); timer = setTimeout(() => send(), 4000); };
+
+      // UI
+      const url = $("#autoUrl"), key = $("#autoKey");
+      url.value = cfg.url; key.value = cfg.key;
+      $("#autoSave").addEventListener("click", async () => {
+        const u = url.value.trim(), k = key.value.trim();
+        if (!valid(u)) { toast("Bitte die Web-App-Adresse prüfen (…/exec). · Please check the web app URL.", 5000); return; }
+        if (!k) { toast("Bitte den Schlüssel eingeben. · Please enter the key.", 4000); return; }
+        if (u !== cfg.url || k !== cfg.key) cfg = { url: u, key: k, synced: {}, last: 0 }; // new script: send everything again
+        save();
+        const ok = await send(true);
+        toast(ok ? "Gesendet – in etwa einer Minute kommt eine Test-E-Mail. · Sent – a test email should arrive within a minute. 📧"
+                 : "Gerade offline – bitte später erneut versuchen. · Offline right now – please try again later.", 6000);
+      });
+      $("#autoOff").addEventListener("click", () => {
+        cfg = { url: "", key: "", synced: {}, last: 0 }; save(); url.value = ""; key.value = ""; status();
+        toast("Automatische E-Mail ausgeschaltet. · Automatic email turned off.");
+      });
+      $("#autoCopyScript").addEventListener("click", async () => {
+        try {
+          const code = await (await fetch("scripts/auto-email/Code.gs", { cache: "no-store" })).text();
+          await navigator.clipboard.writeText(code);
+          toast("Skript kopiert – jetzt in script.google.com einfügen. · Script copied – paste it into script.google.com.", 5000);
+        } catch (err) {
+          window.open("https://github.com/AnjaneyaReddyKovvuri/learn-german/blob/main/scripts/auto-email/Code.gs", "_blank", "noopener");
+        }
+      });
+      window.addEventListener("online", () => send());
+      document.addEventListener("visibilitychange", () => { if (document.hidden) flushOnHide(); });
+      window.addEventListener("pagehide", flushOnHide);
+      setTimeout(() => send(), 3000); // anything left from last time
+      status();
+      return { schedule, status };
+    })();
+
     function render() {
       const today = summarize(1), week = summarize(7);
       const card = (big, label, cls = "") => `<div class="score"><span class="${cls}">${big}</span><small>${label}</small></div>`;
@@ -473,6 +566,7 @@
         ? `<div class="contractions">${week.top.map(([m, c]) => `<span data-say="${esc(m.replace(/ \(.*\)$/, ""))}" class="sayable">${esc(m)} <b>${c}×</b></span>`).join("")}</div>`
         : `<p class="muted">Noch keine Fehler in den letzten 7 Tagen. · No mistakes in the last 7 days. 🎉</p>`;
       el.report.textContent = reportText().body;
+      autoSync.status();
     }
 
     el.range.addEventListener("change", render);
