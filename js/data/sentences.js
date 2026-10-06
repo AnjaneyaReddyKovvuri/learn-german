@@ -171,6 +171,44 @@ Heute ist Montag{z:.|?|,|:} Morgen ist Dienstag. # Today is Monday. Tomorrow is 
 Lisa{z:,|.|?|:} komm bitte her! # Lisa, please come here!
 Weißt du{z:,|.|:|!} wo meine Schuhe sind{z:?|.|,|:} # Do you know where my shoes are?
 Ich bin müde{z:,|:|?|∅} weil ich schlecht geschlafen habe. # I am tired because I slept badly.
+Der {n:Apfel|Banane|Birne|Kirsche} ist {a:rot|laut|schnell|müde}. # The apple is red.
+Meine Mutter {v:trinkt|trinken|trinkst|trinke} jeden Morgen {n:Kaffee|Brot|Kuchen|Käse}. # My mother drinks coffee every morning.
+Wir {v:gehen|geht|gehst|gehe} heute in den {n:Park|Schule|Kino|Stadt}. # We are going to the park today.
+Das Mädchen {v:hat|haben|hast|habe} lange {n:Haare|Haar|Nase|Mund}. # The girl has long hair.
+{p:Ich|Du|Er|Wir} habe einen {a:großen|große|großer|großes} Bruder. # I have a big brother.
+Der Bus {v:kommt|kommen|kommst|komme} um acht {n:Uhr|Stunde|Zeit|Tag}. # The bus comes at eight o'clock.
+Im Sommer {v:essen|esst|isst|esse} wir {d:gern|sehr|wohin|woher} Eis. # In summer we like eating ice cream.
+Kannst du {p:mir|mich|ich|mein} dein {n:Buch|Stift|Tasche|Schere} geben{z:?|.|,|:} # Can you give me your book?
+Mein Hund {v:heißt|heiße|heißen|heißst} Bello und ist drei {n:Jahre|Jahr|Jahres|Jahren} alt. # My dog is called Bello and is three years old.
+Die Kinder {v:singen|singt|singst|singe} ein {a:schönes|schöner|schöne|schönen} Lied. # The children are singing a beautiful song.
+Ich {v:gehe|gehst|geht|gehen} jeden Tag zu {n:Fuß|Bein|Schuh|Weg} zur Schule. # I walk to school every day. # zu Fuß gehen = to walk.
+Am Wochenende {v:schlafe|schläfst|schläft|schlafen} ich {d:gern|sehr|wohin|woher} lange. # At the weekend I like to sleep in.
+Opa {v:liest|lesen|lest|lese} jeden Morgen die {n:Zeitung|Buch|Brief|Heft}. # Grandpa reads the newspaper every morning.
+Wo {v:ist|sind|bist|bin} meine {n:Jacke|Mantel|Hemd|Schal}{z:?|.|,|:} # Where is my jacket?
+Ich {v:möchte|möchtest|möchten|möchtet} bitte einen {n:Apfelsaft|Milch|Limonade|Wasser}. # I would like an apple juice, please.
+Der Zug {v:fährt|fahren|fährst|fahre} um neun Uhr {v:ab|auf|zu|um}. # The train leaves at nine o'clock. # abfahren: der Zug fährt … ab.
+Wir {v:kaufen|kauft|kaufst|kaufe} im Supermarkt {v:ein|an|auf|zu}. # We go shopping at the supermarket. # einkaufen: wir kaufen … ein.
+Der Film {v:fängt|fangen|fängst|fange} um acht Uhr {v:an|ab|aus|zu}. # The film starts at eight o'clock. # anfangen: der Film fängt … an.
+Ich {v:räume|räumst|räumt|räumen} mein Zimmer {v:auf|an|zu|mit}. # I tidy up my room. # aufräumen: ich räume … auf.
+Meine Freundin {v:kommt|kommen|kommst|komme} aus {n:Spanien|Schweiz|Türkei|Berlinerin}. # My friend comes from Spain. # Aber mit Artikel: aus der Schweiz, aus der Türkei.
+Heute ist das Wetter {a:schön|müde|lecker|satt}{z:,|.|?|:} die Sonne scheint. # The weather is nice today, the sun is shining.
+Ich habe {a:großen|große|großer|großes} Hunger{z:.|?|,|:} # I am very hungry.
+Das Auto ist {a:schneller|schnell|am schnellsten|schnellste} als das Fahrrad. # The car is faster than the bike.
+Meine Oma {v:backt|backen|backst|backe} den {a:besten|beste|bester|bestes} Kuchen. # My grandma bakes the best cake.
+In meiner Klasse {v:sind|ist|seid|bin} zwanzig {n:Kinder|Kind|Kindes|Kindern}. # There are twenty children in my class.
+Ich {v:wasche|wäschst|wäscht|waschen} {p:mir|mich|ich|mein} die Hände. # I wash my hands. # Mit einem Körperteil: ich wasche mir die Hände.
+Der Lehrer {v:fragt|fragen|fragst|frage}{z::|,|.|!} „Wer weiß die Antwort?“ # The teacher asks: “Who knows the answer?”
+Ich {v:trinke|trinkst|trinkt|trinken} keinen Kaffee{z:,|.|?|:} aber ich mag {n:Tee|Tasse|Milchkanne|Flasche}. # I don't drink coffee, but I like tea.
+Nach der Schule {v:mache|machst|macht|machen} ich meine {n:Hausaufgaben|Unterricht|Heft|Buch}. # After school I do my homework.
+Mein Vater {v:kann|kannst|können|könnt} sehr gut {v:kochen|kocht|koche|gekocht}. # My father can cook very well.
+Wir {v:wohnen|wohnt|wohnst|wohne} in einer {a:kleinen|kleine|kleiner|kleines} Wohnung. # We live in a small flat.
+Der Hund {v:läuft|laufen|läufst|laufe} {a:schnell|rund|gelb|sauer} durch den {n:Garten|Küche|Wiese|Straße}. # The dog runs quickly through the garden.
+Ich habe {p:meinen|mein|meine|meinem} Schlüssel {v:verloren|verlieren|verliere|verliert}. # I have lost my key.
+Sie {v:gibt|gebe|geben|gibst} {p:ihm|ihn|er|sein} einen Apfel. # She gives him an apple.
+Wann {v:hast|hat|habe|haben} du {n:Geburtstag|Geburt|Tag|Jahr}{z:?|.|,|:} # When is your birthday?
+Im Herbst {v:fallen|fällt|fällst|falle} die {n:Blätter|Blatt|Blattes|Blättern} von den Bäumen. # In autumn the leaves fall from the trees.
+Der Tisch ist {a:rund|müde|durstig|fleißig} und hat vier {n:Beine|Bein|Beines|Beinen}. # The table is round and has four legs.
+Bitte {v:sprich|sprichst|spricht|gesprochen} etwas lauter{z:!|?|,|:} # Please speak a bit louder!
 `,
 
 /* ------------------------------ B1 / B2 ------------------------------ */
@@ -313,6 +351,44 @@ Ich möchte wissen{z:,|;|:|∅} warum du nicht angerufen hast{z:.|?|,|;} # I wou
 Einerseits möchte ich reisen{z:,|:|.|∅} andererseits muss ich sparen. # On the one hand I'd like to travel, on the other hand I have to save.
 Je mehr du übst{z:,|;|:|∅} desto besser wirst du. # The more you practise, the better you get.
 Bevor du gehst{z:,|;|:|∅} mach bitte das Licht aus{z:!|?|,|;} # Before you leave, please turn off the light!
+Wenn ich du {v:wäre|bin|war|sei}, {v:würde|werde|wurde|würdest} ich mich entschuldigen. # If I were you, I would apologise.
+Der Mann, {p:dem|den|der|dessen} ich geholfen habe, hat {p:sich|ihn|ihm|mich} herzlich bedankt. # The man I helped thanked me warmly. # helfen + Dativ: dem · sich bedanken.
+Ich freue {p:mich|mir|sich|dich} sehr über dein {n:Geschenk|Blume|Kuchen|Karte}. # I am very happy about your present.
+Sie hat {p:mir|mich|ich|sich} {v:versprochen|versprechen|verspricht|versprach}, pünktlich zu sein. # She promised me to be on time.
+Trotz {a:großer|großen|großem|große} Müdigkeit {v:arbeitete|arbeiten|gearbeitet|arbeite} er weiter. # Despite great tiredness he carried on working.
+Das Paket {v:wurde|würde|hat|worden} gestern {v:geliefert|liefern|lieferte|liefernd}. # The parcel was delivered yesterday.
+Ich habe {p:mich|mir|sich|mein} für den {a:falschen|falsche|falscher|falsches} Kurs angemeldet. # I registered for the wrong course.
+Er hat {p:sich|ihn|ihm|sein} {d:darüber|daran|darauf|dafür} beschwert, dass das Essen kalt war. # He complained that the food was cold. # sich beschweren über → darüber.
+Kannst du mir {v:erklären|erklärst|erklärt|erklärte}{z:,|;|:|∅} wie das {v:funktioniert|funktionieren|funktionierst|funktioniere}? # Can you explain to me how that works?
+Je früher wir losfahren{z:,|;|:|∅} desto {a:schneller|schnell|schnellsten|am schnellsten} sind wir da. # The earlier we leave, the sooner we'll be there.
+Die Lehrerin, {p:deren|dessen|der|denen} Unterricht alle mögen, {v:geht|gehen|gehst|gegangen} bald in Rente. # The teacher whose lessons everyone likes is retiring soon. # deren = Genitiv feminin / Plural.
+Ich habe keine {n:Lust|Laune|Freude|Wunsch}{z:,|;|:|∅} bei diesem Wetter spazieren zu gehen. # I don't feel like going for a walk in this weather. # Infinitivgruppe nach einem Nomen (Lust): Komma.
+Er hat die {n:Entscheidung|Bedeutung|Ahnung|Rolle} {v:getroffen|gemacht|genommen|getan}, ins Ausland zu ziehen. # He made the decision to move abroad.
+Sie {v:nimmt|nehmt|nimmst|genommen} an einem Deutschkurs {v:teil|mit|an|bei}. # She is taking part in a German course. # teilnehmen an + Dativ.
+Ich {v:schlage|schlägst|schlägt|schlagen} {v:vor|an|auf|zu}, dass wir morgen weitermachen. # I suggest that we continue tomorrow. # vorschlagen: ich schlage … vor.
+Der Unterricht {v:fällt|fallen|fällst|falle} heute leider {v:aus|ab|an|unter}. # Unfortunately lessons are cancelled today. # ausfallen = nicht stattfinden.
+Wir {v:haben|sind|werden|hat} gestern lange {d:darüber|daran|darauf|damit} gesprochen. # We talked about it for a long time yesterday. # sprechen über → darüber.
+Die Prüfung war {a:schwieriger|schwierig|am schwierigsten|schwierigste}{z:,|;|:|∅} als ich erwartet hatte. # The exam was harder than I had expected.
+Mein {n:Nachbar|Nachbarn|Nachbars|Nachbarin} {v:hilft|helfen|helft|hilfst} mir oft im Garten. # My neighbour often helps me in the garden.
+Ich habe meinem {n:Nachbarn|Nachbar|Nachbars|Nachbare} beim Umzug geholfen. # I helped my neighbour move house. # n-Deklination: dem Nachbarn.
+Obwohl sie wenig {n:Zeit|Uhr|Stunde|Mal} hatte{z:,|;|:|∅} {v:half|helfen|geholfen|hilf} sie uns. # Although she had little time, she helped us.
+Es ist wichtig{z:,|;|:|∅} jeden Tag ein bisschen zu {v:üben|übt|geübt|übe}. # It is important to practise a little every day.
+Die Stadt{z:,|;|:|∅} in {p:der|dem|die|den} ich aufgewachsen bin{z:,|;|:|∅} hat sich stark verändert. # The town I grew up in has changed a lot.
+Er {v:erinnert|erinnere|erinnern|erinnerst} sich gern {d:daran|darauf|dafür|darüber}, wie er als Kind im Meer geschwommen ist. # He likes to remember swimming in the sea as a child. # sich erinnern an → daran.
+Könnten Sie mir bitte {v:sagen|sagt|sagst|gesagt}{z:,|;|:|∅} wo der Bahnhof {v:ist|sein|bist|sind}? # Could you please tell me where the station is?
+Das Buch{z:,|;|:|∅} {p:das|den|dem|dessen} ich gerade lese{z:,|;|:|∅} ist sehr {a:spannend|gespannt|spannen|spannt}. # The book I am reading at the moment is very exciting. # spannend = exciting · gespannt = curious.
+Ich bin {a:überzeugt|überzeugend|überzeugen|überzeuge} {d:davon|darauf|daran|dafür}, dass wir es schaffen. # I am convinced that we will manage it. # überzeugt von → davon.
+Sie hat Angst {d:davor|darauf|daran|dafür}{z:,|;|:|∅} allein im Dunkeln zu sein. # She is afraid of being alone in the dark. # Angst haben vor → davor.
+Wir haben {p:uns|sich|unser|wir} {v:entschieden|entscheiden|entschied|entscheidet}, nach Italien zu fahren. # We have decided to go to Italy.
+Der Arzt hat {p:mir|mich|ich|meiner} {v:geraten|raten|riet|geratet}, mehr Sport zu treiben. # The doctor advised me to do more sport. # raten + Dativ.
+Als ich ein Kind {v:war|bin|wäre|gewesen}{z:,|;|:|∅} {v:wohnten|wohnen|gewohnt|wohnt} wir auf dem Land. # When I was a child, we lived in the country.
+Sie spricht {a:fließend|fließt|geflossen|flüssige} Deutsch und versteht fast {p:alles|alle|allem|aller}. # She speaks fluent German and understands almost everything.
+Der {a:neue|neuen|neuer|neues} Kollege {v:stellte|stellen|gestellt|stellst} sich allen vor. # The new colleague introduced himself to everyone.
+Ich {v:hätte|habe|hatte|haben} gern ein Glas Wasser{z:,|;|:|?} bitte. # I would like a glass of water, please.
+Die Gäste {v:wurden|wurde|worden|geworden} vom Chef persönlich {v:begrüßt|begrüßen|begrüßte|begrüßend}. # The guests were welcomed personally by the boss.
+Wegen {p:seiner|seine|seinem|seinen} Krankheit {v:konnte|können|gekonnt|konntest} er nicht kommen. # Because of his illness he could not come. # wegen + Genitiv: seiner Krankheit.
+Es tut {p:mir|mich|ich|mein} leid{z:,|;|:|∅} dass ich zu spät bin. # I am sorry that I am late.
+Wir sollten {p:uns|sich|unser|wir} beeilen{z:,|;|:|∅} {d:sonst|deshalb|trotzdem|außerdem} verpassen wir den Zug. # We should hurry, otherwise we'll miss the train.
 `,
 
 /* ------------------------------ C1 / C2 ------------------------------ */
@@ -489,5 +565,36 @@ Trotz des Regens{z:∅|,|;|:} gingen wir spazieren. # In spite of the rain we we
 Nach langem Überlegen{z:∅|,|;|:} entschied sie sich für das Studium. # After long consideration she decided to go to university.
 Ich freue mich darauf{z:,|∅|;|:} dich wiederzusehen. # I am looking forward to seeing you again. # Hinweiswort „darauf“ → Komma vor der Infinitivgruppe.
 Sein Wunsch{z:,|∅|;|:} Pilot zu werden{z:,|∅|;|:} ging in Erfüllung. # His wish to become a pilot came true. # Die Infinitivgruppe hängt von einem Nomen ab → Kommas.
+Der Verdächtige gab an, er {v:sei|seien|habe|sein} zur Tatzeit zu Hause {v:gewesen|sein|war|gewest}. # The suspect stated that he had been at home at the time of the crime.
+Die Regierung hat Maßnahmen {v:ergriffen|gegriffen|begriffen|angegriffen}{z:,|∅|;|:} um die Inflation zu {v:bekämpfen|kämpfen|erkämpfen|bekämpft}. # The government has taken measures to fight inflation. # Maßnahmen ergreifen.
+Es {v:stellt|steht|setzt|legt} sich die Frage{z:,|∅|;|:} ob dieses Vorgehen {a:rechtmäßig|rechtmäßiges|rechtlicher|gerechte} ist. # The question arises whether this procedure is lawful.
+Sie kam nicht {d:umhin|umher|herum|hinum}, seine Leistung anzuerkennen. # She could not help but acknowledge his achievement. # nicht umhinkommen, etwas zu tun.
+Der Bericht {v:legt|liegt|stellt|setzt} nahe{z:,|∅|;|:} dass die Zahlen {v:manipuliert|manipulieren|manipulierend|manipulierten} wurden. # The report suggests that the figures were manipulated. # etwas nahelegen = vermuten lassen.
+Angesichts der {a:angespannten|angespannte|angespannter|angespanntem} Lage{z:∅|,|;|:} wurde die Sitzung vertagt. # In view of the tense situation the meeting was adjourned.
+Er {v:setzte|saß|stellte|legte} alles daran{z:,|∅|;|:} das Projekt rechtzeitig {v:abzuschließen|abschließen|zu abschließen|abgeschlossen}. # He did everything he could to finish the project on time. # alles daransetzen, etwas zu tun.
+Die Entscheidung{z:,|∅|;|:} {p:deren|dessen|der|denen} Folgen noch nicht abzusehen sind{z:,|∅|;|:} wurde heftig kritisiert. # The decision, whose consequences cannot yet be foreseen, was fiercely criticised.
+Der Vorstand {v:zog|zogen|gezogen|ziehe} den Vorschlag ernsthaft in {n:Erwägung|Kraft|Rede|Vorschein}. # The board seriously considered the proposal. # in Erwägung ziehen.
+Es ist {d:keineswegs|keinesgleichen|keinerlei|keinesteils} sicher{z:,|∅|;|:} dass er die Wahl {v:gewinnt|gewinnen|gewonnen|gewinnst}. # It is by no means certain that he will win the election.
+Die Verhandlungen {v:wurden|wurde|worden|würde}{z:,|∅|;|:} nachdem man sich nicht einigen konnte{z:,|∅|;|:} abgebrochen. # The negotiations were broken off after no agreement could be reached.
+Er {v:machte|tat|nahm|gab} keinen {n:Hehl|Hohn|Hall|Held} daraus, dass er den Plan ablehnte. # He made no secret of the fact that he rejected the plan. # keinen Hehl aus etwas machen.
+Das Ergebnis lässt zu {v:wünschen|wollen|hoffen|bitten} übrig. # The result leaves something to be desired.
+Wer A sagt{z:,|∅|;|:} {v:muss|müssen|musst|müsst} auch B sagen. # In for a penny, in for a pound.
+Sie {v:ließ|lies|las|löste} sich von seinen Argumenten nicht {v:beirren|beirrt|geirrt|irren}. # She did not let his arguments unsettle her. # sich nicht beirren lassen.
+Er hat sich {d:geradezu|gerade|geradeaus|geradewegs} vorbildlich {v:verhalten|verhielt|verhaltet|gehalten}. # He behaved in a downright exemplary manner.
+Die Kritik {v:richtet|richten|rechnet|reicht} sich vor allem gegen {p:diejenigen|denjenigen|derjenige|demjenigen}, die Verantwortung tragen. # The criticism is directed above all at those who bear responsibility.
+{d:Zugegeben|Zugeben|Zugebend|Zugab}{z:,|∅|;|?} der Plan hat Schwächen, aber er ist durchführbar. # Admittedly, the plan has weaknesses, but it is feasible.
+Er ist{z:,|∅|;|:} soweit ich weiß{z:,|∅|;|:} bereits {v:abgereist|abreisen|abgereisen|abreiste}. # As far as I know, he has already left. # Der eingeschobene Nebensatz steht zwischen zwei Kommas.
+Das Unternehmen sieht sich mit schweren Vorwürfen {v:konfrontiert|konfrontieren|konfrontierend|konfrontierte}{z:,|∅|;|:} die es entschieden {v:zurückweist|weist zurück|zurückweisen|zurückgewiesen}. # The company faces serious accusations, which it firmly rejects.
+Er trug maßgeblich dazu {v:bei|an|auf|vor}{z:,|∅|;|:} dass das Projekt gelang. # He contributed significantly to the project's success. # zu etwas beitragen.
+Die Ergebnisse sind mit {n:Vorsicht|Rücksicht|Nachsicht|Aussicht} zu {v:genießen|nehmen|essen|schmecken}. # The results should be taken with a pinch of salt. # mit Vorsicht zu genießen sein.
+Ihr Vortrag {v:stieß|stoß|stößte|gestoßen} auf {a:reges|rege|reger|regem} Interesse. # Her talk met with lively interest. # auf Interesse stoßen.
+Sollte es {v:regnen|regnet|geregnet|regne}{z:,|∅|;|:} {v:findet|finden|fand|gefunden} die Feier im Saal statt. # Should it rain, the party will take place in the hall. # Bedingungssatz ohne „wenn“: Sollte es …
+Er gilt als einer der {a:bedeutendsten|bedeutendste|bedeutendster|bedeutendstem} Physiker {p:seiner|seine|seinem|seinen} Zeit. # He is considered one of the most important physicists of his time.
+Das Gesetz wurde {a:einstimmig|einstimmend|eingestimmt|einstimmige} {v:verabschiedet|verabschieden|abgeschieden|verabschiedend}. # The law was passed unanimously. # ein Gesetz verabschieden.
+Er hat {p:sich|ihn|ihm|seiner} {a:bereit|bereits|bereitet|breit} erklärt, die Kosten zu übernehmen. # He has declared himself willing to bear the costs.
+Die Zahl der Arbeitslosen {v:ist|sind|hat|haben} im letzten Quartal deutlich {v:gesunken|gesenkt|sinken|gesinkt}. # The number of unemployed fell significantly in the last quarter. # Die Zahl sinkt (ist gesunken) · jemand senkt etwas (hat gesenkt).
+Der Autor {v:setzt|sitzt|stellt|legt} sich kritisch mit der Geschichte {p:seines|seinem|seinen|seiner} Landes auseinander. # The author takes a critical look at the history of his country. # sich auseinandersetzen mit.
+Es {v:steht|stellt|liegt|sitzt} außer {n:Frage|Rede|Sicht|Kraft}, dass er recht hat. # There is no question that he is right. # außer Frage stehen.
+Sie {v:verlieh|verlieht|verleihte|verliehen} ihrer Enttäuschung deutlich {n:Ausdruck|Eindruck|Abdruck|Aufdruck}. # She clearly expressed her disappointment. # einer Sache Ausdruck verleihen.
 `,
 };
