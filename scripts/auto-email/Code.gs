@@ -13,7 +13,7 @@ const CONFIG = {
   SHEET_NAME: 'Anshi – Deutsch-Fortschritt',
 };
 
-const HEADERS = ['Datum', 'Name', 'Spiel geübt', 'Spiel richtig', 'Fälle geübt', 'Fälle richtig', 'Minuten (ms)', 'Fehler', 'Aktualisiert'];
+const HEADERS = ['Datum', 'Name', 'Spiel geübt', 'Spiel richtig', 'Fälle geübt', 'Fälle richtig', 'Minuten (ms)', 'Fehler', 'Aktualisiert', 'Sätze geübt', 'Sätze richtig'];
 const WEEKDAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
@@ -98,7 +98,10 @@ function upsertDay_(d, name) {
     num_(d.game && d.game.n), num_(d.game && d.game.c),
     num_(d.cases && d.cases.n), num_(d.cases && d.cases.c),
     num_(d.ms), JSON.stringify(d.mistakes || {}), new Date(),
+    num_(d.sent && d.sent.n), num_(d.sent && d.sent.c),
   ];
+  // Sheets created by an older version of this script: add the new column titles.
+  if (!sheet.getRange(1, HEADERS.length).getDisplayValue()) sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
   const last = sheet.getLastRow();
   if (last > 1) {
     const dates = sheet.getRange(2, 1, last - 1, 1).getDisplayValues();
@@ -120,7 +123,7 @@ function readDays_() {
   sheet.getRange(2, 1, last - 1, HEADERS.length).getDisplayValues().forEach((r) => {
     let mistakes = {};
     try { mistakes = JSON.parse(r[7] || '{}'); } catch (err) { /* ignore */ }
-    days[r[0]] = { name: r[1], game: { n: +r[2] || 0, c: +r[3] || 0 }, cases: { n: +r[4] || 0, c: +r[5] || 0 }, ms: +r[6] || 0, mistakes };
+    days[r[0]] = { name: r[1], game: { n: +r[2] || 0, c: +r[3] || 0 }, cases: { n: +r[4] || 0, c: +r[5] || 0 }, sent: { n: +r[9] || 0, c: +r[10] || 0 }, ms: +r[6] || 0, mistakes };
   });
   return days;
 }
@@ -148,6 +151,7 @@ function sendReport_(isTest) {
     L.push('Richtig · correct: ' + today.c + ' von ' + today.n + ' (' + pct_(today.c, today.n) + ' %)');
     if (today.game.n) L.push('  • Artikel-Spiel · article game: ' + today.game.n + ' Wörter, ' + pct_(today.game.c, today.game.n) + ' % richtig');
     if (today.cases.n) L.push('  • Fälle · cases: ' + today.cases.n + ' Sätze, ' + pct_(today.cases.c, today.cases.n) + ' % richtig');
+    if (today.sent.n) L.push('  • Lückensätze · sentences: ' + today.sent.n + ' Sätze, ' + pct_(today.sent.c, today.sent.n) + ' % richtig');
     if (today.top.length) {
       L.push('', 'Häufigste Fehler · most frequent mistakes:');
       today.top.slice(0, 6).forEach((t) => L.push('  • ' + t[0] + (t[1] > 1 ? ' (' + t[1] + '×)' : '')));
@@ -158,7 +162,7 @@ function sendReport_(isTest) {
   let streak = 0;
   for (let i = today.n ? 0 : 1; ; i++) {
     const d = days[keyOf(i)];
-    if (d && d.game.n + d.cases.n > 0) streak++; else break;
+    if (d && d.game.n + d.cases.n + d.sent.n > 0) streak++; else break;
   }
   if (streak > 1) L.push('🔥 ' + streak + ' Tage in Folge geübt · ' + streak + ' days in a row');
   L.push('', '— Anshi German Learning App (automatische E-Mail · automatic email)');
@@ -172,13 +176,14 @@ function sendReport_(isTest) {
 }
 
 function summary_(list) {
-  const s = { days: 0, n: 0, c: 0, ms: 0, game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, mistakes: {} };
+  const s = { days: 0, n: 0, c: 0, ms: 0, game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, sent: { n: 0, c: 0 }, mistakes: {} };
   list.forEach((d) => {
     if (!d) return;
-    const n = d.game.n + d.cases.n;
+    const n = d.game.n + d.cases.n + d.sent.n;
     if (!n) return;
-    s.days++; s.n += n; s.c += d.game.c + d.cases.c; s.ms += d.ms;
+    s.days++; s.n += n; s.c += d.game.c + d.cases.c + d.sent.c; s.ms += d.ms;
     s.game.n += d.game.n; s.game.c += d.game.c; s.cases.n += d.cases.n; s.cases.c += d.cases.c;
+    s.sent.n += d.sent.n; s.sent.c += d.sent.c;
     Object.keys(d.mistakes).forEach((k) => { s.mistakes[k] = (s.mistakes[k] || 0) + d.mistakes[k]; });
   });
   s.top = Object.keys(s.mistakes).map((k) => [k, s.mistakes[k]]).sort((a, b) => b[1] - a[1]);

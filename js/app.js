@@ -343,7 +343,8 @@
   /* ------------------------------------------------------------------ */
 
   const progress = (() => {
-    const KEY = "artikel.progress";      // { "2026-10-04": { game: {n, c}, cases: {n, c}, ms, mistakes: {label: count} } }
+    const KEY = "artikel.progress";      // { "2026-10-04": { game: {n, c}, cases: {n, c}, sent: {n, c}, ms, mistakes: {label: count} } }
+    const KINDS = ["game", "cases", "sent"]; // article game, cases practice, sentences (days saved by older versions have no "sent")
     const PROFILE_KEY = "artikel.reportProfile";
     const KEEP_DAYS = 90;
     const MAX_GAP = 60 * 1000;           // gaps longer than a minute don't count as practice time
@@ -356,16 +357,20 @@
     const fmtDate = (key, opts = { weekday: "short", day: "numeric", month: "short" }) =>
       new Date(key + "T12:00:00").toLocaleDateString("de-DE", opts);
     const pctOf = (c, n) => (n ? Math.round((c / n) * 100) : null);
+    const kindOf = (d, kind) => (d && d[kind]) || { n: 0, c: 0 };
+    const dayN = (d) => KINDS.reduce((t, kind) => t + kindOf(d, kind).n, 0);
+    const dayC = (d) => KINDS.reduce((t, kind) => t + kindOf(d, kind).c, 0);
 
     function prune() {
       const oldest = dayKey(daysBack(KEEP_DAYS));
       for (const k of Object.keys(data)) if (k < oldest) delete data[k];
     }
 
-    // Called for every answer in the article game ("game") and the cases practice ("cases").
+    // Called for every answer in the article game ("game"), the cases practice ("cases") and the sentences ("sent").
     function record(kind, ok, mistake) {
       const k = dayKey();
-      const d = data[k] || (data[k] = { game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, ms: 0, mistakes: {} });
+      const d = data[k] || (data[k] = { game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, sent: { n: 0, c: 0 }, ms: 0, mistakes: {} });
+      if (!d[kind]) d[kind] = { n: 0, c: 0 };
       d[kind].n++;
       if (ok) d[kind].c++;
       else if (mistake) d.mistakes[mistake] = (d.mistakes[mistake] || 0) + 1;
@@ -381,15 +386,15 @@
 
     function summarize(days) {
       const keys = Array.from({ length: days }, (_, i) => dayKey(daysBack(i)));
-      const s = { days: 0, n: 0, c: 0, ms: 0, game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, mistakes: {}, perDay: [] };
+      const s = { days: 0, n: 0, c: 0, ms: 0, game: { n: 0, c: 0 }, cases: { n: 0, c: 0 }, sent: { n: 0, c: 0 }, mistakes: {}, perDay: [] };
       for (const k of keys) {
         const d = data[k];
-        const n = d ? d.game.n + d.cases.n : 0;
+        const n = dayN(d);
         s.perDay.push({ k, d, n });
         if (!d || !n) continue;
         s.days++;
-        s.n += n; s.c += d.game.c + d.cases.c; s.ms += d.ms;
-        s.game.n += d.game.n; s.game.c += d.game.c; s.cases.n += d.cases.n; s.cases.c += d.cases.c;
+        s.n += n; s.c += dayC(d); s.ms += d.ms;
+        for (const kind of KINDS) { s[kind].n += kindOf(d, kind).n; s[kind].c += kindOf(d, kind).c; }
         for (const [m, cnt] of Object.entries(d.mistakes)) s.mistakes[m] = (s.mistakes[m] || 0) + cnt;
       }
       s.top = Object.entries(s.mistakes).sort((a, b) => b[1] - a[1]).slice(0, 8);
@@ -400,7 +405,7 @@
       let n = 0;
       for (let i = data[dayKey()] ? 0 : 1; ; i++) {
         const d = data[dayKey(daysBack(i))];
-        if (d && d.game.n + d.cases.n > 0) n++; else break;
+        if (dayN(d) > 0) n++; else break;
       }
       return n;
     }
@@ -434,11 +439,12 @@
         L.push(`Richtig · correct: ${s.c} von ${s.n} (${pctOf(s.c, s.n)} %)`);
         if (s.game.n) L.push(`  • Artikel-Spiel · article game: ${s.game.n} Wörter, ${pctOf(s.game.c, s.game.n)} % richtig`);
         if (s.cases.n) L.push(`  • Fälle · cases: ${s.cases.n} Sätze, ${pctOf(s.cases.c, s.cases.n)} % richtig`);
+        if (s.sent.n) L.push(`  • Lückensätze · sentences: ${s.sent.n} Sätze, ${pctOf(s.sent.c, s.sent.n)} % richtig`);
         if (s.top.length) L.push("", "Häufigste Fehler · most frequent mistakes:", ...s.top.slice(0, 6).map(([m, c]) => `  • ${m}${c > 1 ? ` (${c}×)` : ""}`));
         if (days > 1) {
           L.push("", "Pro Tag · per day:");
           for (const p of s.perDay.slice().reverse()) if (p.n) {
-            const c = p.d.game.c + p.d.cases.c;
+            const c = dayC(p.d);
             L.push(`  ${fmtDate(p.k)}: ${p.n} geübt, ${pctOf(c, p.n)} %, ${minutes(p.d.ms)} Min.`);
           }
         }
@@ -463,7 +469,7 @@
         const out = [];
         for (let i = 0; i < 14; i++) {
           const k = dayKey(daysBack(i)), d = data[k];
-          if (d && sig(d) !== cfg.synced[k]) out.push({ date: k, game: d.game, cases: d.cases, ms: d.ms, mistakes: d.mistakes });
+          if (d && sig(d) !== cfg.synced[k]) out.push({ date: k, game: d.game, cases: d.cases, sent: kindOf(d, "sent"), ms: d.ms, mistakes: d.mistakes });
         }
         return out;
       }
@@ -555,12 +561,12 @@
         ${card(wp == null ? "–" : wp + " %", "7 Tage richtig · correct", cls(wp))}
         ${card("🔥 " + streakDays(), "Tage in Folge · days in a row")}
       </div>`;
-      el.days.innerHTML = `<tr><th>Tag · day</th><th>Geübt · practised</th><th>Richtig · correct</th><th>Spiel · game</th><th>Fälle · cases</th><th>Minuten</th></tr>` +
+      el.days.innerHTML = `<tr><th>Tag · day</th><th>Geübt · practised</th><th>Richtig · correct</th><th>Spiel · game</th><th>Fälle · cases</th><th>Sätze · sentences</th><th>Minuten</th></tr>` +
         summarize(14).perDay.map(({ k, d, n }) => {
-          if (!n) return `<tr class="muted"><td>${esc(fmtDate(k))}</td><td colspan="5">–</td></tr>`;
-          const c = d.game.c + d.cases.c, p = pctOf(c, n);
+          if (!n) return `<tr class="muted"><td>${esc(fmtDate(k))}</td><td colspan="6">–</td></tr>`;
+          const c = dayC(d), p = pctOf(c, n);
           const part = (x) => (x.n ? `${x.n} · ${pctOf(x.c, x.n)} %` : "–");
-          return `<tr><td>${esc(fmtDate(k))}</td><td>${n}</td><td class="${cls(p)}">${p} %</td><td>${part(d.game)}</td><td>${part(d.cases)}</td><td>${minutes(d.ms)}</td></tr>`;
+          return `<tr><td>${esc(fmtDate(k))}</td><td>${n}</td><td class="${cls(p)}">${p} %</td><td>${part(d.game)}</td><td>${part(d.cases)}</td><td>${part(kindOf(d, "sent"))}</td><td>${minutes(d.ms)}</td></tr>`;
         }).join("");
       el.mistakes.innerHTML = week.top.length
         ? `<div class="contractions">${week.top.map(([m, c]) => `<span data-say="${esc(m.replace(/ \(.*\)$/, ""))}" class="sayable">${esc(m)} <b>${c}×</b></span>`).join("")}</div>`
@@ -607,6 +613,7 @@
     if (name !== "game") game.pause();
     if (name === "cursive") renderCursive();
     if (name === "progress") progress.render();
+    if (name === "sentences") sentences.show();
   }
   $$(".tab").forEach((t) => t.addEventListener("click", () => showTab(t.dataset.tab)));
 
@@ -1643,6 +1650,280 @@
     return { showSub, newQuestion };
   })();
   window.__cases = cases;
+
+  /* ------------------------------------------------------------------ */
+  /* Sentences: fill the gaps, three levels                              */
+  /* ------------------------------------------------------------------ */
+
+  const sentences = (() => {
+    const KEY = "artikel.sentences";
+    const NONE = "∅"; // punctuation option: no mark at this place
+    const TYPES = { n: "Nomen", p: "Pronomen", v: "Verb", a: "Adjektiv", d: "Adverb", z: "Satzzeichen" };
+    const LEVELS = { A: "A1/A2", B: "B1/B2", C: "C1/C2" };
+
+    // One sentence per line: text with gaps {type:right|wrong|wrong|wrong} # English # tip (see js/data/sentences.js).
+    function parse(line) {
+      const [text, en = "", tip = ""] = line.split(" # ").map((x) => x.trim());
+      const parts = [], gaps = [];
+      let last = 0;
+      for (const m of text.matchAll(/\{([npvadz]):([^}]+)\}/g)) {
+        const [answer, ...wrong] = m[2].split("|");
+        parts.push(text.slice(last, m.index));
+        gaps.push({ type: m[1], answer, wrong });
+        last = m.index + m[0].length;
+      }
+      parts.push(text.slice(last));
+      return { parts, gaps, en, tip };
+    }
+    const DATA = {};
+    for (const [lvl, block] of Object.entries(window.SENTENCE_DATA || {})) {
+      DATA[lvl] = block.split("\n").map((l) => l.trim()).filter(Boolean).map(parse).filter((s) => s.gaps.length);
+    }
+
+    const el = {
+      levels: $$("#sfLevels .chip"), types: $$("#sfTypes .chip"), mode: $("#sfMode"), english: $("#sfEnglish"), speakOn: $("#sfSpeak"),
+      card: $("#sfCard"), badge: $("#sfBadge"), sentence: $("#sfSentence"), hint: $("#sfHint"), feedback: $("#sfFeedback"),
+      answers: $("#sfAnswers"), pool: $("#sfPool"), explain: $("#sfExplain"), check: $("#sfCheck"), next: $("#sfNext"), say: $("#sfSay"),
+      correct: $("#sfCorrect"), wrong: $("#sfWrong"), streak: $("#sfStreak"),
+    };
+    const stats = { correct: 0, wrong: 0, streak: 0 };
+    let level = "A";
+    let deck = [];  // sentences still to come, in random order
+    let q = null;   // { s, open: [gap index], multi, chips, fill: {gap index: chip id}, given, answered }
+    let drag = null;
+    const again = new Set(); // sentences waiting for their second try
+
+    const settings = store.get(KEY, {});
+    if (DATA[settings.level]) level = settings.level;
+    if ([...el.mode.options].some((o) => o.value === settings.mode)) el.mode.value = settings.mode;
+    el.english.checked = settings.english !== false;
+    el.speakOn.checked = settings.speak !== false;
+    if (Array.isArray(settings.types) && settings.types.some((t) => TYPES[t])) {
+      el.types.forEach((c) => c.classList.toggle("active", settings.types.includes(c.dataset.type)));
+    }
+    el.levels.forEach((c) => c.classList.toggle("active", c.dataset.level === level));
+
+    const rand = (a) => a[Math.floor(Math.random() * a.length)];
+    const shuffle = (a) => {
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      return a;
+    };
+    const activeTypes = () => el.types.filter((c) => c.classList.contains("active")).map((c) => c.dataset.type);
+    // The gaps of a sentence that may be asked with the chosen word types.
+    const askable = (s, types) => s.gaps.map((g, i) => (types.includes(g.type) ? i : -1)).filter((i) => i >= 0);
+    const optionHtml = (t) => (t === NONE ? `${NONE} <small>nichts · nothing</small>` : esc(t));
+    const chipHtml = (c) => `<button type="button" class="sf-chip" data-chip="${c.id}">${optionHtml(c.text)}</button>`;
+    const fullText = (s) => s.parts.map((part, i) => part + (i < s.gaps.length && s.gaps[i].answer !== NONE ? s.gaps[i].answer : "")).join("");
+    const gapOf = (id) => q.open.find((i) => q.fill[i] === id);
+    const saveSettings = () => store.set(KEY, { level, mode: el.mode.value, types: activeTypes(), english: el.english.checked, speak: el.speakOn.checked });
+
+    function refill() {
+      const types = activeTypes();
+      let list = (DATA[level] || []).filter((s) => askable(s, types).length);
+      if (el.mode.value === "multi") {
+        const several = list.filter((s) => askable(s, types).length > 1);
+        if (several.length) list = several;
+      }
+      deck = shuffle(list.slice());
+    }
+
+    function gapHtml(i) {
+      const g = q.s.gaps[i];
+      if (!q.open.includes(i)) return g.answer === NONE ? "" : esc(g.answer);
+      if (q.answered) {
+        const ok = q.given[i] === g.answer;
+        return `<span class="sf-res ${ok ? "ok" : "bad"}">${ok ? "" : `<s>${esc(q.given[i])}</s> `}${esc(g.answer)}</span>`;
+      }
+      if (!q.multi) return `<span class="cq-blank">___</span>`;
+      const chip = q.chips.find((c) => c.id === q.fill[i]);
+      return `<span class="sf-gap${chip ? " filled" : ""}" data-gap="${i}">${chip ? chipHtml(chip) : "&nbsp;"}</span>`;
+    }
+    function render() {
+      el.sentence.innerHTML = q.s.parts.map((part, i) => esc(part) + (i < q.s.gaps.length ? gapHtml(i) : "")).join("");
+      if (!q.multi || q.answered) return;
+      const used = Object.values(q.fill);
+      el.pool.innerHTML = q.chips.filter((c) => !used.includes(c.id)).map(chipHtml).join("");
+      el.check.disabled = q.open.some((i) => q.fill[i] == null);
+    }
+
+    function newQuestion() {
+      progress.touch();
+      if (!deck.length) refill();
+      const types = activeTypes(), mode = el.mode.value;
+      let at = deck.length - 1;
+      let multi = mode === "multi";
+      if (mode === "mix" && Math.random() < 0.4) {
+        // Mixed: now and then look ahead for a sentence with several gaps.
+        for (let i = deck.length - 1; i >= 0 && !multi; i--) if (askable(deck[i], types).length > 1) { at = i; multi = true; }
+      }
+      const s = deck.splice(at, 1)[0];
+      if (!s) return;
+      const can = askable(s, types);
+      multi = multi && can.length > 1;
+      q = { s, open: multi ? can : [rand(can)], multi, chips: [], fill: {}, given: {}, answered: false };
+      if (multi) {
+        // The right words plus a few wrong ones, mixed.
+        const right = q.open.map((i) => s.gaps[i].answer);
+        const extra = [];
+        const addWrong = (i) => {
+          const w = rand(s.gaps[i].wrong.filter((x) => !right.includes(x) && !extra.includes(x)));
+          if (w) extra.push(w);
+        };
+        q.open.forEach(addWrong);
+        if (q.open.length === 2) addWrong(rand(q.open));
+        q.chips = shuffle([...right, ...extra]).map((text, id) => ({ id: String(id), text }));
+        el.answers.innerHTML = "";
+      } else {
+        const g = s.gaps[q.open[0]];
+        el.answers.innerHTML = shuffle([g.answer, ...g.wrong])
+          .map((o, i) => `<button class="ans cq-ans" data-a="${esc(o)}">${optionHtml(o)} <kbd>${i + 1}</kbd></button>`).join("");
+      }
+      el.card.className = "card game-card sf-card";
+      el.badge.textContent = `${LEVELS[level]} · ${[...new Set(q.open.map((i) => TYPES[s.gaps[i].type]))].join(" + ")}`;
+      el.hint.textContent = el.english.checked && s.en ? `(${s.en})` : "";
+      el.feedback.textContent = multi ? "Zieh die Wörter in die Lücken. · Drag the words into the gaps." : "Was passt in die Lücke? · What fits in the gap?";
+      el.feedback.style.color = "";
+      el.explain.hidden = true;
+      el.answers.hidden = multi;
+      el.pool.hidden = !multi;
+      el.check.hidden = !multi;
+      el.next.blur(); // so that Enter doesn't skip the new sentence
+      render();
+    }
+
+    function finish(given) {
+      if (!q || q.answered) return;
+      q.answered = true;
+      q.given = given;
+      const { s } = q;
+      const ok = q.open.every((i) => given[i] === s.gaps[i].answer);
+      const full = fullText(s);
+      if (ok) { stats.correct++; stats.streak++; } else { stats.wrong++; stats.streak = 0; }
+      progress.record("sent", ok, ok ? null : full);
+      // A wrong sentence comes back once, a few sentences later.
+      if (!ok && !again.has(s) && deck.length > 4) { again.add(s); deck.splice(deck.length - 4, 0, s); } else again.delete(s);
+      el.correct.textContent = stats.correct; el.wrong.textContent = stats.wrong; el.streak.textContent = stats.streak;
+      showPct($("#sfPct"), stats.correct, stats.wrong);
+      $$("#sfAnswers .ans").forEach((b) => {
+        b.disabled = true;
+        if (b.dataset.a === s.gaps[q.open[0]].answer) b.classList.add("correct", "cq-right");
+        else if (b.dataset.a === given[q.open[0]]) b.classList.add("wrong");
+      });
+      el.pool.hidden = true;
+      el.check.hidden = true;
+      el.card.classList.add(ok ? "sf-ok" : "sf-bad");
+      render();
+      el.feedback.textContent = ok ? rand(["Super! · Great! 🎉", "Richtig! · Correct! ⭐", "Toll! · Well done! 👏"]) : "Leider falsch · Not quite – so ist es richtig:";
+      el.feedback.style.color = ok ? "var(--das)" : "var(--die)";
+      el.hint.textContent = "";
+      el.explain.innerHTML = (s.en ? `<p class="muted">${esc(s.en)}</p>` : "") + (s.tip ? `<p>💡 ${esc(s.tip)}</p>` : "");
+      el.explain.hidden = !s.en && !s.tip;
+      if (el.speakOn.checked) speak(full, el.sentence, { sentence: true });
+    }
+    const check = () => { if (q && q.multi && !el.check.disabled) finish(Object.fromEntries(q.open.map((i) => [i, q.chips.find((c) => c.id === q.fill[i]).text]))); };
+
+    // ---------- several gaps: drag a word into a gap (or tap it) ----------
+    function place(id, gap) {
+      const from = gapOf(id), there = q.fill[gap];
+      if (from === gap) return;
+      q.fill[gap] = id;
+      if (from != null) { if (there != null) q.fill[from] = there; else delete q.fill[from]; } // from another gap: swap
+      render();
+    }
+    function unplace(id) {
+      const from = gapOf(id);
+      if (from != null) { delete q.fill[from]; render(); }
+    }
+    // Tap: a word in the pool jumps into the first free gap, a word in a gap goes back.
+    function tap(id) {
+      if (gapOf(id) != null) { unplace(id); return; }
+      const free = q.open.find((i) => q.fill[i] == null);
+      if (free != null) place(id, free);
+    }
+    const gapAt = (x, y) => { const t = document.elementFromPoint(x, y); return t ? t.closest("#sfSentence .sf-gap") : null; };
+    const markOver = (gap) => $$("#sfSentence .sf-gap").forEach((g) => g.classList.toggle("over", g === gap));
+
+    el.card.addEventListener("pointerdown", (ev) => {
+      const chip = ev.target.closest(".sf-chip");
+      if (!chip || !q || q.answered || !q.multi || ev.button > 0) return;
+      drag = { id: chip.dataset.chip, chip, x: ev.clientX, y: ev.clientY, ghost: null };
+      try { chip.setPointerCapture(ev.pointerId); } catch { /* not supported */ }
+    });
+    el.card.addEventListener("pointermove", (ev) => {
+      if (!drag) return;
+      if (!drag.ghost) {
+        if (Math.hypot(ev.clientX - drag.x, ev.clientY - drag.y) < 8) return; // still a tap
+        const r = drag.chip.getBoundingClientRect();
+        drag.dx = drag.x - r.left; drag.dy = drag.y - r.top;
+        drag.ghost = drag.chip.cloneNode(true);
+        drag.ghost.classList.add("sf-ghost");
+        document.body.appendChild(drag.ghost);
+        drag.chip.classList.add("dragging");
+      }
+      drag.ghost.style.left = `${ev.clientX - drag.dx}px`;
+      drag.ghost.style.top = `${ev.clientY - drag.dy}px`;
+      markOver(gapAt(ev.clientX, ev.clientY));
+    });
+    function endDrag(ev, cancelled) {
+      if (!drag) return;
+      const d = drag;
+      drag = null;
+      if (d.ghost) d.ghost.remove();
+      d.chip.classList.remove("dragging");
+      markOver(null);
+      if (cancelled || !q || q.answered) return;
+      if (!d.ghost) { tap(d.id); return; }
+      const gap = gapAt(ev.clientX, ev.clientY);
+      if (gap) place(d.id, Number(gap.dataset.gap)); else unplace(d.id); // dropped outside: back to the pool
+    }
+    el.card.addEventListener("pointerup", (ev) => endDrag(ev, false));
+    el.card.addEventListener("pointercancel", (ev) => endDrag(ev, true));
+    // Keyboard (Enter / Space on a focused word) – pointer taps are handled above.
+    el.card.addEventListener("click", (ev) => {
+      const chip = ev.target.closest(".sf-chip");
+      if (chip && ev.detail === 0 && q && q.multi && !q.answered) tap(chip.dataset.chip);
+    });
+
+    // ---------- controls ----------
+    el.answers.addEventListener("click", (ev) => { const b = ev.target.closest(".ans"); if (b && q) finish({ [q.open[0]]: b.dataset.a }); });
+    el.check.addEventListener("click", check);
+    el.next.addEventListener("click", newQuestion);
+    el.say.addEventListener("click", () => {
+      if (!q) return;
+      const text = q.answered ? fullText(q.s) : q.s.parts.map((part, i) => part + (i >= q.s.gaps.length ? "" : q.open.includes(i) ? " … " : q.s.gaps[i].answer.replace(NONE, ""))).join("");
+      speak(text, el.say, { sentence: true });
+    });
+    const restart = () => { saveSettings(); deck = []; newQuestion(); };
+    el.levels.forEach((chip) => chip.addEventListener("click", () => {
+      level = chip.dataset.level;
+      el.levels.forEach((c) => c.classList.toggle("active", c === chip));
+      restart();
+    }));
+    el.types.forEach((chip) => chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+      if (!activeTypes().length) chip.classList.add("active"); // keep at least one
+      restart();
+    }));
+    el.mode.addEventListener("change", restart);
+    el.speakOn.addEventListener("change", saveSettings);
+    el.english.addEventListener("change", () => {
+      saveSettings();
+      if (q && !q.answered) el.hint.textContent = el.english.checked && q.s.en ? `(${q.s.en})` : "";
+    });
+    document.addEventListener("keydown", (ev) => {
+      if (!$("#tab-sentences").classList.contains("active") || !q || ev.target.matches(TEXT_INPUT)) return;
+      if (ev.key === "Enter") {
+        if (q.answered) newQuestion(); else if (q.multi && !el.check.disabled) check(); else return;
+        ev.preventDefault();
+        return;
+      }
+      const btns = $$("#sfAnswers .ans");
+      const i = Number(ev.key) - 1;
+      if (!q.answered && !q.multi && i >= 0 && i < btns.length) { finish({ [q.open[0]]: btns[i].dataset.a }); ev.preventDefault(); }
+    });
+
+    return { show: () => { if (!q) newQuestion(); } };
+  })();
 
   /* ------------------------------------------------------------------ */
   /* Excel upload                                                        */
